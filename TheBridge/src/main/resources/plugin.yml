@@ -1,0 +1,6 @@
+name: TheBridgePlugin
+version: '${project.version}'
+main: dev.ricecx.frostygamerzone.thebridge.TheBridgePlugin
+api-version: 1.17
+depend:
+  - SlimeWorldManager
