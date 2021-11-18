@@ -1,5 +1,6 @@
 package dev.ricecx.frostygamerzone.minigameapi;
 
+import com.google.common.base.Preconditions;
 import com.grinderwolf.swm.api.SlimePlugin;
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.bukkitapi.Utils;
@@ -7,6 +8,7 @@ import dev.ricecx.frostygamerzone.bukkitapi.modules.scoreboard.ScoreboardModule;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.commands.GameManagerCommand;
 import dev.ricecx.frostygamerzone.minigameapi.countdown.CountdownManager;
+import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.game.GameManager;
 import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.listeners.MinigamesListener;
@@ -52,16 +54,22 @@ public class MinigamesAPI {
     private static UserManager userManager = new UserManager();
     @Getter
     private static ScoreboardModule scoreboardModule;
+    private static PlayerVisibilityTask playerVisibilityTask;
 
 
     public static void loadAPI() {
         long startLoad = System.currentTimeMillis();
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
+        Preconditions.checkNotNull(plugin, "SLIME WORLD MANAGER IS NOT LOADED. PROCEED WITH CAUTION.");
         slimePlugin = (SlimePlugin) plugin;
+        countdownManager = new CountdownManager();
+        playerVisibilityTask = new PlayerVisibilityTask();
 
+        playerVisibilityTask.runTaskTimer(MinigamesAPI.getMinigamesPlugin(), 1, (20 * 5));
 
-        if(countdownManager != null) countdownManager.startCountdowns();
+        countdownManager.startCountdowns();
+
         GameState.setState(GameState.WAITING);
         scoreboardModule = new ScoreboardModule();
         OffloadTask.offloadAsync(() -> getWorldManager().loadMap("final-lobby").whenComplete((sw, i) -> getWorldManager().setFollowingMapProperties(sw.getName())));
@@ -70,6 +78,11 @@ public class MinigamesAPI {
         getMinigamesPlugin().registerListeners(new MinigamesListener());
         getMinigamesPlugin().registerCommands(new GameManagerCommand());
         LoggingUtils.info("MinigamesAPI loaded in " + (System.currentTimeMillis() - startLoad) + "ms!");
+    }
+
+
+    public static void broadcastGame(Game<?, ?> game, String ...message) {
+        broadcastGame(game.getIdentifier(), message);
     }
 
     public static void broadcastGame(String game, String ...message) {

@@ -3,6 +3,7 @@ package dev.ricecx.frostygamerzone.minigameapi.lobby.core;
 import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.events.GameJoinEvent;
+import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUserStatus;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,7 @@ public abstract class AbstractLobby implements Listener, Lobby {
     @EventHandler
     public void onPlayerJoin(GameJoinEvent evt) {
         onJoin(evt.getPlayer());
+
         giveItems(evt.getPlayer().getPlayer());
     }
 

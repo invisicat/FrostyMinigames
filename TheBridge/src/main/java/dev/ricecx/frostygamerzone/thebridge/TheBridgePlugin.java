@@ -4,8 +4,6 @@ package dev.ricecx.frostygamerzone.thebridge;
 import dev.ricecx.frostygamerzone.bukkitapi.user.utils.UserRegister;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesPlugin;
-import dev.ricecx.frostygamerzone.minigameapi.countdown.CountdownManager;
-import dev.ricecx.frostygamerzone.thebridge.countdowns.GameStartCountdown;
 import dev.ricecx.frostygamerzone.thebridge.lobby.TheBridgeLobby;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUserImpl;
@@ -18,7 +16,6 @@ public final class TheBridgePlugin extends MinigamesPlugin implements UserRegist
     public void onEnable() {
         // Plugin startup logic
         super.onEnable();
-        MinigamesAPI.setCountdownManager(new CountdownManager(new GameStartCountdown()));
 
         MinigamesAPI.getGameManager().createGame(new TheBridgeGame());
         MinigamesAPI.getGameManager().setLobby(new TheBridgeLobby());

@@ -1,14 +1,16 @@
 package dev.ricecx.frostygamerzone.thebridge.lobby;
 
-import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.bukkitapi.ItemBuilder;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
+import dev.ricecx.frostygamerzone.minigameapi.game.Game;
+import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.lobby.core.AbstractLobby;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeLobbyBoard;
+import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeLobbyPreGameBoard;
+import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
+import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -17,6 +19,31 @@ public class TheBridgeLobby extends AbstractLobby {
 
     @Override
     public void giveItems(Player player) {
+        Game<BridgeTeam, BridgeUser> game = MinigamesAPI.getGameManager().getPlayerGame(player);
+
+        if(game.getGameState() == GameState.WAITING) {
+            giveLobbyVotingItems(player);
+        } else if(game.getGameState() == GameState.IN_GAME) {
+            // do something else
+        }
+    }
+
+    @Override
+    public void onJoin(GameUser user) {
+        Game<BridgeTeam, BridgeUser> game = MinigamesAPI.getGameManager().getPlayerGame(user);
+
+        if(game.getGameState() == GameState.WAITING) {
+            MinigamesAPI.getScoreboardModule().provideScoreboard(user.getPlayer(), new BridgeLobbyPreGameBoard(user));
+        } else {
+            MinigamesAPI.getScoreboardModule().provideScoreboard(user.getPlayer(), new BridgeLobbyBoard(user));
+
+        }
+        user.getPlayer().teleport(new Location(Bukkit.getWorld("final-lobby"), 30,83,-51));
+
+        user.getPlayer().playSound(user.getPlayer().getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 1);
+    }
+
+    private void giveLobbyVotingItems(Player player) {
         ItemStack redHelmet = new ItemBuilder(Material.LEATHER_HELMET).setName("&cTeam Red").toItemStack();
         LeatherArmorMeta meta = ((LeatherArmorMeta) redHelmet.getItemMeta());
         if(meta != null) meta.setColor(Color.RED);
@@ -27,23 +54,12 @@ public class TheBridgeLobby extends AbstractLobby {
         if(blueMeta != null) blueMeta.setColor(Color.BLUE);
         blueHelmet.setItemMeta(blueMeta);
 
+        player.getInventory().setItem(0, new ItemBuilder(Material.PAPER).setName("&2&lVote for map").toItemStack());
         player.getInventory().setItem(3, redHelmet);
         player.getInventory().setItem(4, new ItemBuilder(Material.MAP).setName("&a&lRandom Team").toItemStack());
         player.getInventory().setItem(5, blueHelmet);
 
-        player.getInventory().setItem(8, new ItemBuilder(Material.PAPER).setName("&c&lLeave").toItemStack());
-    }
-
-    @Override
-    public void onJoin(GameUser user) {
-
-        for (Player player : CorePlugin.getAllPlayers()) {
-            player.sendMessage("[DEBUG BROADCAST] " + user.getName() + " has joined the game with STATUS " + user.getGameUserStatus() + " and joined game " + user.getGame());
-        }
-        MinigamesAPI.getScoreboardModule().provideScoreboard(user.getPlayer(), new BridgeLobbyBoard(user));
-        user.getPlayer().teleport(new Location(Bukkit.getWorld("final-lobby"), 30,83,-51));
-
-        MinigamesAPI.broadcastGame(user.getGame(), "> " + user.getPlayer().getDisplayName() + " has joined the lobby");
+        player.getInventory().setItem(8, new ItemBuilder(Material.RED_BED).setName("&c&lLeave").toItemStack());
     }
 
 }

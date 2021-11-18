@@ -13,11 +13,11 @@ import java.util.UUID;
 @Getter
 @Setter
 public abstract class Team<T extends GameUser> {
+
     private UUID teamID;
     private List<T> players = new ArrayList<>();
     private TeamColor teamColor = TeamColor.NONE;
     private int size;
-
 
     public abstract Location getSpawn();
 

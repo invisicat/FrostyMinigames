@@ -1,15 +1,12 @@
-package dev.ricecx.frostygamerzone.thebridge.lobby;
+package dev.ricecx.frostygamerzone.thebridge.lobby.boards;
 
 import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.bukkitapi.scoreboard.FrostBoard;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import org.apache.commons.lang.time.DurationFormatUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
 
 public class BridgeLobbyBoard extends FrostBoard {
 

@@ -1,5 +1,6 @@
 package dev.ricecx.frostygamerzone.minigameapi.countdown;
 
+import com.google.common.collect.Maps;
 import dev.ricecx.frostygamerzone.common.task.GlobalTimer;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
@@ -8,18 +9,20 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class CountdownManager {
 
-    private final GameCountdown countdown;
+    private final Map<UUID, GameCountdown<?,?>> countdowns = Maps.newConcurrentMap();
     private GlobalTimer timer;
-    @Setter private BukkitRunnable runnable;
+    @Setter private Map<UUID, BukkitRunnable> bukkitRunnables = new HashMap<>();
 
 
-    public CountdownManager(GameCountdown countdown) {
-        this.countdown = countdown;
-
+    public CountdownManager(GameCountdown<?, ?> ...countdown) {
+        for (GameCountdown<?, ?> gameCountdown : countdown) {
+            countdowns.put(UUID.randomUUID(), gameCountdown);
+        }
     }
 
     public void startCountdowns() {
@@ -28,24 +31,32 @@ public class CountdownManager {
     }
 
     public void check() {
-        if(!preconditions()) {
-            cancelRunnable();
-            return;
+
+        for (Map.Entry<UUID, GameCountdown<?, ?>> countdown : countdowns.entrySet()) {
+            if(!preconditions(countdown.getValue())) {
+                cancelRunnable(countdown.getKey());
+                return;
+            }
+
+            if(bukkitRunnables.get(countdown.getKey()) == null) {
+
+                BukkitRunnable runnable = bukkitRunnables.put(countdown.getKey(), generateRunnable(countdown.getKey()));
+                if(runnable == null) throw new RuntimeException("could not add bukkit runnable into map");
+                runnable.runTaskTimer(MinigamesAPI.getMinigamesPlugin(), 1, 20);
+            }
         }
 
-        if(runnable == null) {
-            setRunnable(generateRunnable());
-            runnable.runTaskTimer(MinigamesAPI.getMinigamesPlugin(), 1, 20);
-        }
     }
 
-    private void cancelRunnable() {
+    private void cancelRunnable(UUID uuid) {
+        BukkitRunnable runnable = bukkitRunnables.get(uuid);
         if(runnable != null) {
             runnable.cancel();
-            OffloadTask.offloadSync(countdown::onCancel);
+            OffloadTask.offloadSync(() -> countdowns.get(uuid).onCancel());
         }
     }
-    private BukkitRunnable generateRunnable() {
+    private BukkitRunnable generateRunnable(UUID countdownUUID) {
+        GameCountdown<?, ?> countdown = countdowns.get(countdownUUID);
         return new BukkitRunnable() {
             int secondsPassed = 0;
             @Override
@@ -64,7 +75,7 @@ public class CountdownManager {
     }
 
 
-    public boolean preconditions() {
-        return Bukkit.getOnlinePlayers().size() >= countdown.getMinPlayers();
+    public boolean preconditions(GameCountdown<?, ?> countdown) {
+        return countdown.getGame().getAllPlayersInGame().size() >= countdown.getMinPlayers();
     }
 }

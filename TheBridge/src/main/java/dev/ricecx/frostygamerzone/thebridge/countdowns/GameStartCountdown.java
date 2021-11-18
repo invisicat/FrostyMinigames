@@ -2,18 +2,21 @@ package dev.ricecx.frostygamerzone.thebridge.countdowns;
 
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
-import dev.ricecx.frostygamerzone.minigameapi.countdown.CountdownType;
 import dev.ricecx.frostygamerzone.minigameapi.countdown.GameCountdown;
+import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
+import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
+import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.CompletableFuture;
 
-public class GameStartCountdown extends GameCountdown {
-    public GameStartCountdown() {
-        super(10, 10, CountdownType.STARTING);
+public class GameStartCountdown extends GameCountdown<BridgeTeam, BridgeUser> {
+    public GameStartCountdown(Game<BridgeTeam, BridgeUser> game) {
+        super(10, 10, game);
     }
 
     @Override
@@ -37,16 +40,16 @@ public class GameStartCountdown extends GameCountdown {
 
     @Override
     public void onEnoughPlayers() {
-        for (Player player : CorePlugin.getAllPlayers()) {
-            player.sendMessage("Game is now starting");
-        }
+        MinigamesAPI.broadcastGame(getGame(), "&7Game is starting in 60 seconds!");
+        getGame().executePlayer((p) -> p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1));
+
     }
 
     @Override
     public void onCount(int current) {
         if(current % 10 == 0) {
-            //
-            System.out.println("almost done.");
+            MinigamesAPI.broadcastGame(getGame(), String.format("&AGame is starting in &e%d &aseconds", getTimer() - current));
+            getGame().executePlayer((p) -> p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1));
         }
     }
 }

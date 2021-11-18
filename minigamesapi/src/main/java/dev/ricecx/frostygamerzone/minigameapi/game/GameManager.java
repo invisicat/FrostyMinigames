@@ -3,8 +3,11 @@ package dev.ricecx.frostygamerzone.minigameapi.game;
 import com.google.common.collect.Maps;
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.minigameapi.lobby.core.AbstractLobby;
+import dev.ricecx.frostygamerzone.minigameapi.team.Team;
+import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,7 @@ import java.util.UUID;
 
 public class GameManager {
 
-    private final Map<String, Game<?,?>> games = Maps.newConcurrentMap();
+    private final Map<String, Game<? extends Team<? extends GameUser>, ? extends GameUser>> games = Maps.newConcurrentMap();
     private final Map<UUID, String> playersInGames = Maps.newConcurrentMap();
 
     private AbstractLobby lobby;
@@ -23,8 +26,19 @@ public class GameManager {
         String prefix = game.getPrefix() + (existingGames + 1);
 
         games.put(prefix, game);
+        game.setIdentifier(prefix);
 
         return prefix;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Team<U>, U extends GameUser> Game<T, U> getPlayerGame(@NotNull GameUser gameUser) {
+        return (Game<T, U>) games.get(gameUser.getGame());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Team<U>, U extends GameUser> Game<T, U> getPlayerGame(@NotNull Player player) {
+        return (Game<T, U>) games.get(playersInGames.get(player.getUniqueId()));
     }
 
     public boolean playerBelongsToAny(UUID player) {
@@ -43,6 +57,11 @@ public class GameManager {
         return players;
     }
 
+    public void removePlayer(Player player) {
+        playersInGames.remove(player.getUniqueId());
+    }
+
+
     public synchronized void addPlayerToGame(UUID uuid, String gameServer) {
         playersInGames.put(uuid, gameServer);
     }
@@ -57,6 +76,10 @@ public class GameManager {
 
     public Map<UUID, String> getPlayersInGames() {
         return playersInGames;
+    }
+
+    public Game<?,?> getGame(String game) {
+        return games.get(game);
     }
 
     public Map<String, Game<?,?>> getGames() {
