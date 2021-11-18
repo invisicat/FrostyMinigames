@@ -14,7 +14,6 @@ import lombok.Getter;
 public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implements Game<BridgeTeam, BridgeUser> {
 
     public TheBridgeGame() {
-        setGame(this);
         setTeamManager(new BridgeTeamManager(this));
         setGameCountdown(new GameStartCountdown(this));
         setMapVoter(new BridgeMapVoter(this));

@@ -18,6 +18,11 @@ public final class TheBridgePlugin extends MinigamesPlugin implements UserRegist
         super.onEnable();
 
         MinigamesAPI.getGameManager().createGame(new TheBridgeGame());
+        MinigamesAPI.getGameManager().createGame(new TheBridgeGame());
+        MinigamesAPI.getGameManager().createGame(new TheBridgeGame());
+        MinigamesAPI.getGameManager().createGame(new TheBridgeGame());
+        MinigamesAPI.getGameManager().createGame(new TheBridgeGame());
+
         MinigamesAPI.getGameManager().setLobby(new TheBridgeLobby());
 
         MinigamesAPI.loadAPI();

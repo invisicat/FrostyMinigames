@@ -4,6 +4,7 @@ import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.events.AsyncGameChatEvent;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
+import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
 import org.bukkit.Bukkit;
 
 public class ChatAPIImpl implements ChatAPI {
@@ -18,8 +19,8 @@ public class ChatAPIImpl implements ChatAPI {
 
     @Override
     public void onJoinMessage(GameUser user) {
-        Game<?,?> game = user.getGameObject();
-        Bukkit.getPluginManager().callEvent(new AsyncGameChatEvent(user,  String.format("&8&l → &r&7%s &bhas joined the game &7(%d&7/%d&7)", user.getName(), game.getPlayersIngame(), game.getMaxPlayers())));
+        Game<?, ?> game = user.getGameObject();
+        OffloadTask.offloadAsync(() -> Bukkit.getPluginManager().callEvent(new AsyncGameChatEvent(user, String.format("&8&l → &r&7%s &bhas joined the game &7(%d&7/%d&7)", user.getName(), game.getPlayersIngame(), game.getMaxPlayers()))));
     }
 
     @Override
@@ -29,8 +30,8 @@ public class ChatAPIImpl implements ChatAPI {
 
     @Override
     public void onLeaveMessage(GameUser user) {
-        Game<?,?> game = user.getGameObject();
-        Bukkit.getPluginManager().callEvent(new AsyncGameChatEvent(user,  String.format("&8&l → &r&7%s &bhas left the game &7(%d&7/%d&7)", user.getName(), game.getPlayersIngame(), game.getMaxPlayers())));
+        Game<?, ?> game = user.getGameObject();
+        OffloadTask.offloadAsync(() -> Bukkit.getPluginManager().callEvent(new AsyncGameChatEvent(user, String.format("&8&l → &r&7%s &bhas left the game &7(%d&7/%d&7)", user.getName(), game.getPlayersIngame(), game.getMaxPlayers()))));
 
     }
 }

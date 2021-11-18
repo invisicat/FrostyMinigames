@@ -2,6 +2,7 @@ package dev.ricecx.frostygamerzone.minigameapi.game;
 
 import com.google.common.collect.Maps;
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.lobby.core.AbstractLobby;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
@@ -27,7 +28,7 @@ public class GameManager {
 
         games.put(prefix, game);
         game.setIdentifier(prefix);
-
+        LoggingUtils.info("Creating game: " + prefix);
         return prefix;
     }
 

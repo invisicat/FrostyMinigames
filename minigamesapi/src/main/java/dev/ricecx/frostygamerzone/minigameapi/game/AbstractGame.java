@@ -12,7 +12,6 @@ import lombok.Data;
 @Data
 public abstract class AbstractGame<U extends GameUser, T extends Team<U>> implements Game<T, U> {
 
-    private Game<T, U> game;
     private GameState gameState;
     private TeamManager<U, T> teamManager;
     private GameCountdown<T, U> gameCountdown;
@@ -30,7 +29,7 @@ public abstract class AbstractGame<U extends GameUser, T extends Team<U>> implem
 
     @Override
     public int getPlayersIngame() {
-        return MinigamesAPI.getGameManager().getAllPlayersInGame(game.getIdentifier()).size();
+        return MinigamesAPI.getGameManager().getAllPlayersInGame(getIdentifier()).size();
     }
 
     @Override
@@ -42,6 +41,4 @@ public abstract class AbstractGame<U extends GameUser, T extends Team<U>> implem
 
         return size;
     }
-
-
 }

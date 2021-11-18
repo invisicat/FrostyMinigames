@@ -10,7 +10,9 @@ import dev.ricecx.frostygamerzone.minigameapi.commands.GameManagerCommand;
 import dev.ricecx.frostygamerzone.minigameapi.countdown.CountdownManager;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.game.GameManager;
+import dev.ricecx.frostygamerzone.minigameapi.game.GameManagerListener;
 import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
+import dev.ricecx.frostygamerzone.minigameapi.inventory.InventoryClicker;
 import dev.ricecx.frostygamerzone.minigameapi.listeners.MinigamesListener;
 import dev.ricecx.frostygamerzone.minigameapi.mapvoting.MapVoter;
 import dev.ricecx.frostygamerzone.minigameapi.modules.chat.ChatAPI;
@@ -37,7 +39,6 @@ public class MinigamesAPI {
     @Getter
     private static GameManager gameManager = new GameManager();
 
-    private static TeamManager<?, ?> teamManager;
     @Getter
     @Setter
     private static CountdownManager countdownManager;
@@ -55,6 +56,7 @@ public class MinigamesAPI {
     @Getter
     private static ScoreboardModule scoreboardModule;
     private static PlayerVisibilityTask playerVisibilityTask;
+    private static InventoryClicker inventoryClicker;
 
 
     public static void loadAPI() {
@@ -65,6 +67,7 @@ public class MinigamesAPI {
         slimePlugin = (SlimePlugin) plugin;
         countdownManager = new CountdownManager();
         playerVisibilityTask = new PlayerVisibilityTask();
+        inventoryClicker = InventoryClicker.getInstance();
 
         playerVisibilityTask.runTaskTimer(MinigamesAPI.getMinigamesPlugin(), 1, (20 * 5));
 
@@ -75,7 +78,7 @@ public class MinigamesAPI {
         OffloadTask.offloadAsync(() -> getWorldManager().loadMap("final-lobby").whenComplete((sw, i) -> getWorldManager().setFollowingMapProperties(sw.getName())));
         new ChatModule();
 
-        getMinigamesPlugin().registerListeners(new MinigamesListener());
+        getMinigamesPlugin().registerListeners(new MinigamesListener(), new GameManagerListener());
         getMinigamesPlugin().registerCommands(new GameManagerCommand());
         LoggingUtils.info("MinigamesAPI loaded in " + (System.currentTimeMillis() - startLoad) + "ms!");
     }

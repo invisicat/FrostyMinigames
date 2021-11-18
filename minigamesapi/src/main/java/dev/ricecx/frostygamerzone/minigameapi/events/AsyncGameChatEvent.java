@@ -1,5 +1,6 @@
 package dev.ricecx.frostygamerzone.minigameapi.events;
 
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,8 @@ public class AsyncGameChatEvent extends GameUserEvent {
         super(who, true);
         this.message = message;
         this.game = who.getGame();
+
+        LoggingUtils.info(String.format("Async Chat Event - [%s] %s: %s", who.getGame(), who.getName(), message));
     }
 
 
