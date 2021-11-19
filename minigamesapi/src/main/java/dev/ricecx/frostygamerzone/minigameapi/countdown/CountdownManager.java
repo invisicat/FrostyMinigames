@@ -1,6 +1,7 @@
 package dev.ricecx.frostygamerzone.minigameapi.countdown;
 
 import com.google.common.collect.Maps;
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.common.task.GlobalTimer;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
@@ -16,10 +17,14 @@ public class CountdownManager {
 
     private final Map<UUID, GameCountdown<?,?>> countdowns = Maps.newConcurrentMap();
     private GlobalTimer timer;
-    @Setter private Map<UUID, BukkitRunnable> bukkitRunnables = new HashMap<>();
+    @Setter private Map<UUID, BukkitRunnable> bukkitRunnables = Maps.newConcurrentMap();
 
 
     public CountdownManager(GameCountdown<?, ?> ...countdown) {
+        addCountdown(countdown);
+    }
+
+    public void addCountdown(GameCountdown<?, ?> ...countdown) {
         for (GameCountdown<?, ?> gameCountdown : countdown) {
             countdowns.put(UUID.randomUUID(), gameCountdown);
         }
@@ -39,10 +44,9 @@ public class CountdownManager {
             }
 
             if(bukkitRunnables.get(countdown.getKey()) == null) {
-
-                BukkitRunnable runnable = bukkitRunnables.put(countdown.getKey(), generateRunnable(countdown.getKey()));
-                if(runnable == null) throw new RuntimeException("could not add bukkit runnable into map");
-                runnable.runTaskTimer(MinigamesAPI.getMinigamesPlugin(), 1, 20);
+                BukkitRunnable runnable = generateRunnable(countdown.getKey());
+                bukkitRunnables.put(countdown.getKey(), runnable);
+                    runnable.runTaskTimer(MinigamesAPI.getMinigamesPlugin(), 1, 20);
             }
         }
 
@@ -64,7 +68,6 @@ public class CountdownManager {
                 if(secondsPassed >= countdown.getTimer()) {
                     countdown.start();
                     cancel();
-                    timer.terminate();
                     return;
                 }
                 countdown.onCount(secondsPassed);

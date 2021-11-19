@@ -3,6 +3,7 @@ package dev.ricecx.frostygamerzone.minigameapi.game;
 import com.google.common.collect.Maps;
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
+import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.lobby.core.AbstractLobby;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
@@ -27,6 +28,7 @@ public class GameManager {
         String prefix = game.getPrefix() + (existingGames + 1);
 
         games.put(prefix, game);
+        MinigamesAPI.getCountdownManager().addCountdown(game.getGameCountdown());
         game.setIdentifier(prefix);
         LoggingUtils.info("Creating game: " + prefix);
         return prefix;
@@ -48,7 +50,7 @@ public class GameManager {
         return games.containsKey(correctServer);
     }
 
-    public List<Player> getAllPlayersInGame(String gameServer) {
+    public synchronized List<Player> getAllPlayersInGame(String gameServer) {
         List<Player> players = new ArrayList<>();
         for (Map.Entry<UUID, String> uuidStringEntry : playersInGames.entrySet()) {
             if(!uuidStringEntry.getValue().equalsIgnoreCase(gameServer)) continue;
@@ -58,7 +60,7 @@ public class GameManager {
         return players;
     }
 
-    public void removePlayer(Player player) {
+    public synchronized void removePlayer(Player player) {
         playersInGames.remove(player.getUniqueId());
     }
 

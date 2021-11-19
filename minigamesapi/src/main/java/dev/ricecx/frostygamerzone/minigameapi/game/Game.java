@@ -24,6 +24,7 @@ public interface Game<T extends Team<U>, U extends GameUser> {
     String getIdentifier();
     void setIdentifier(String identifier);
     GameState getGameState();
+    void setGameState(GameState newGameState);
     MapVoter getMapVoter();
 
     int getPlayersIngame();
@@ -36,6 +37,8 @@ public interface Game<T extends Team<U>, U extends GameUser> {
     TeamManager<U, T> getTeamManager();
 
 
+    void endGame();
+
     default void executePlayer(Consumer<Player> consumer) {
         for (Player player : getAllPlayersInGame()) {
             consumer.accept(player);
@@ -43,7 +46,7 @@ public interface Game<T extends Team<U>, U extends GameUser> {
     }
 
     default List<Player> getAllPlayersInGame() {
-        return MinigamesAPI.getGameManager().getAllPlayersInGame(getPrefix());
+        return MinigamesAPI.getGameManager().getAllPlayersInGame(getIdentifier());
     }
 
 

@@ -1,9 +1,12 @@
 package dev.ricecx.frostygamerzone.minigameapi.team;
 
+import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +20,14 @@ public abstract class Team<T extends GameUser> {
     private UUID teamID;
     private List<T> players = new ArrayList<>();
     private TeamColor teamColor = TeamColor.NONE;
+    private ItemStack teamItem;
     private int size;
 
     public abstract Location getSpawn();
 
     public Team(int size) {
         this.size = size;
+        this.teamID = UUID.randomUUID();
     }
 
     public Team(UUID uuid, int size) {
@@ -36,6 +41,11 @@ public abstract class Team<T extends GameUser> {
             players.add(player);
     }
 
+    @SuppressWarnings("unchecked")
+    public void removePlayer(Player player) {
+        removePlayer((T) Users.getUser(player, GameUser.class));
+    }
+
     public void removePlayer(T player) {
         players.remove(player);
     }
@@ -46,6 +56,10 @@ public abstract class Team<T extends GameUser> {
 
     public boolean isFull() {
         return this.players.size() >= this.getSize();
+    }
+
+    public String getDisplayName() {
+        return teamColor.getName();
     }
 
     @Override

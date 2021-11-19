@@ -24,4 +24,9 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
     public String getPrefix() {
         return "tb-";
     }
+
+    @Override
+    public void endGame() {
+
+    }
 }

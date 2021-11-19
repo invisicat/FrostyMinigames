@@ -18,6 +18,7 @@ import dev.ricecx.frostygamerzone.minigameapi.mapvoting.MapVoter;
 import dev.ricecx.frostygamerzone.minigameapi.modules.chat.ChatAPI;
 import dev.ricecx.frostygamerzone.minigameapi.modules.chat.ChatModule;
 import dev.ricecx.frostygamerzone.minigameapi.slime.WorldManager;
+import dev.ricecx.frostygamerzone.minigameapi.team.TeamListener;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamManager;
 import dev.ricecx.frostygamerzone.minigameapi.users.UserManager;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
@@ -41,7 +42,7 @@ public class MinigamesAPI {
 
     @Getter
     @Setter
-    private static CountdownManager countdownManager;
+    private static CountdownManager countdownManager = new CountdownManager();
     @Getter
     @Setter
     private static MapVoter mapVoterManager;
@@ -65,7 +66,6 @@ public class MinigamesAPI {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
         Preconditions.checkNotNull(plugin, "SLIME WORLD MANAGER IS NOT LOADED. PROCEED WITH CAUTION.");
         slimePlugin = (SlimePlugin) plugin;
-        countdownManager = new CountdownManager();
         playerVisibilityTask = new PlayerVisibilityTask();
         inventoryClicker = InventoryClicker.getInstance();
 
@@ -78,7 +78,7 @@ public class MinigamesAPI {
         OffloadTask.offloadAsync(() -> getWorldManager().loadMap("final-lobby").whenComplete((sw, i) -> getWorldManager().setFollowingMapProperties(sw.getName())));
         new ChatModule();
 
-        getMinigamesPlugin().registerListeners(new MinigamesListener(), new GameManagerListener());
+        getMinigamesPlugin().registerListeners(new MinigamesListener(), new GameManagerListener(), new TeamListener());
         getMinigamesPlugin().registerCommands(new GameManagerCommand());
         LoggingUtils.info("MinigamesAPI loaded in " + (System.currentTimeMillis() - startLoad) + "ms!");
     }

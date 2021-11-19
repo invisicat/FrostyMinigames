@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TeamManager<U extends GameUser, T extends Team<U>> {
+public abstract class TeamManager<U extends GameUser, T extends Team<U>> {
 
     @Getter private final Map<UUID, T> registeredTeams = new ConcurrentHashMap<>();
     private final Game<T, U> game;
@@ -20,4 +20,11 @@ public class TeamManager<U extends GameUser, T extends Team<U>> {
         this.game = game;
     }
 
+    public abstract Map<String, UUID> getTeams();
+
+    public UUID addTeam(T team) {
+        registeredTeams.put(team.getTeamID(), team);
+
+        return team.getTeamID();
+    }
 }
