@@ -15,7 +15,7 @@ public interface SlimeAPI {
 
     void teleport(SlimeWorld world, Player player);
 
-    CompletableFuture<Boolean> loadAndGenerateMap(String name);
+    CompletableFuture<String> loadAndGenerateMap(String name);
 
 
     void generateMap(SlimeWorld world);

@@ -39,16 +39,24 @@ public class WorldManager implements SlimeAPI {
         });
     }
 
+    /**
+     * Loads and generates a map and returns the map's name
+     * @param name name of the template world
+     * @return the temporary world's name
+     */
     @Override
-    public CompletableFuture<Boolean> loadAndGenerateMap(String name) {
-        CompletableFuture<Boolean> doneTask = new CompletableFuture<>();
-        loadMap(name).thenAccept((world) -> OffloadTask.offloadSync(() -> MinigamesAPI.getWorldManager().generateMap(world))).thenAccept((i) -> doneTask.complete(true)).complete(null);
+    public CompletableFuture<String> loadAndGenerateMap(String name) {
+        CompletableFuture<String> doneTask = new CompletableFuture<>();
+        CompletableFuture<SlimeWorld> futureWorld = loadMap(name);
+        futureWorld.thenAccept((world) -> OffloadTask.offloadSync(() -> MinigamesAPI.getWorldManager().generateMap(world))).complete(null);
+        futureWorld.whenComplete(((slimeWorld, throwable) -> doneTask.complete(slimeWorld.getName())));
 
         return doneTask;
     }
 
     @Override
     public void generateMap(SlimeWorld world) {
+        // we'll need to clone and generate here :P
         MinigamesAPI.getSlimePlugin().generateWorld(world);
     }
 

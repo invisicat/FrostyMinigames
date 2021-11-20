@@ -1,6 +1,8 @@
 package dev.ricecx.frostygamerzone.minigameapi.mapvoting;
 
 import com.google.common.collect.Maps;
+import dev.ricecx.frostygamerzone.minigameapi.Minigame;
+import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
@@ -12,20 +14,16 @@ import java.util.stream.Collectors;
 
 public abstract class MapVoterManager<T extends Team<U>, U extends GameUser> implements MapVoter {
 
-    private final static List<String> maps = new ArrayList<>();
+    private final Set<String> maps;
 
     private final Map<GameUser, String> votes = Maps.newConcurrentMap();
     private final Game<T, U> game;
 
-    static {
-        maps.add("Space");
-        maps.add("Cliffs");
-        maps.add("Pirates");
-        maps.add("Nigger");
-    }
 
     public MapVoterManager(Game<T, U> game) {
         this.game = game;
+
+        this.maps = new HashSet<>();
     }
 
     @Override
@@ -48,7 +46,7 @@ public abstract class MapVoterManager<T extends Team<U>, U extends GameUser> imp
     }
 
     @Override
-    public List<String> getAllVotableMaps() {
+    public Set<String> getAllVotableMaps() {
         return maps;
     }
 }

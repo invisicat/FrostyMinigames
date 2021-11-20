@@ -1,12 +1,17 @@
 package dev.ricecx.frostygamerzone.minigameapi;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.grinderwolf.swm.api.SlimePlugin;
+import com.grinderwolf.swm.api.world.SlimeWorld;
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.bukkitapi.modules.scoreboard.ScoreboardModule;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
+import dev.ricecx.frostygamerzone.minigameapi.adapters.LocationAdapter;
 import dev.ricecx.frostygamerzone.minigameapi.commands.GameManagerCommand;
+import dev.ricecx.frostygamerzone.minigameapi.commands.TestGUICommand;
 import dev.ricecx.frostygamerzone.minigameapi.countdown.CountdownManager;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.game.GameManager;
@@ -14,20 +19,24 @@ import dev.ricecx.frostygamerzone.minigameapi.game.GameManagerListener;
 import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.inventory.InventoryClicker;
 import dev.ricecx.frostygamerzone.minigameapi.listeners.MinigamesListener;
+import dev.ricecx.frostygamerzone.minigameapi.map.MapManager;
 import dev.ricecx.frostygamerzone.minigameapi.mapvoting.MapVoter;
 import dev.ricecx.frostygamerzone.minigameapi.modules.chat.ChatAPI;
 import dev.ricecx.frostygamerzone.minigameapi.modules.chat.ChatModule;
+import dev.ricecx.frostygamerzone.minigameapi.modules.gui.GUIModule;
 import dev.ricecx.frostygamerzone.minigameapi.slime.WorldManager;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamListener;
-import dev.ricecx.frostygamerzone.minigameapi.team.TeamManager;
 import dev.ricecx.frostygamerzone.minigameapi.users.UserManager;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.util.concurrent.CompletableFuture;
 
 
 @Data
@@ -35,10 +44,23 @@ public class MinigamesAPI {
 
 
     @Getter
+    @Setter
+    private static Minigame minigame;
+
+    @Getter
     private static SlimePlugin slimePlugin;
 
     @Getter
+    private static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Location.class, new LocationAdapter())
+            .create();
+
+    @Getter
     private static GameManager gameManager = new GameManager();
+
+    @Getter
+    @Setter
+    private static MapManager<?> mapManager;
 
     @Getter
     @Setter
@@ -75,11 +97,16 @@ public class MinigamesAPI {
 
         GameState.setState(GameState.WAITING);
         scoreboardModule = new ScoreboardModule();
-        OffloadTask.offloadAsync(() -> getWorldManager().loadMap("final-lobby").whenComplete((sw, i) -> getWorldManager().setFollowingMapProperties(sw.getName())));
+
+        getMapManager().loadMapsIntoCache();
+        OffloadTask.offloadSync(() -> getWorldManager().loadMap("final-lobby").whenComplete((sw, i) -> getWorldManager().setFollowingMapProperties(sw.getName())));
         new ChatModule();
+        new GUIModule();
 
         getMinigamesPlugin().registerListeners(new MinigamesListener(), new GameManagerListener(), new TeamListener());
-        getMinigamesPlugin().registerCommands(new GameManagerCommand());
+        getMinigamesPlugin().registerCommands(new GameManagerCommand(),
+                new TestGUICommand());
+
         LoggingUtils.info("MinigamesAPI loaded in " + (System.currentTimeMillis() - startLoad) + "ms!");
     }
 

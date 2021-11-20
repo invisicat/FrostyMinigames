@@ -24,7 +24,7 @@ public class GameStartCountdown extends GameCountdown<BridgeTeam, BridgeUser> {
     public void start() {
         String topMap = "tb-space";
 
-        CompletableFuture<Boolean> loadFuture = MinigamesAPI.getWorldManager().loadAndGenerateMap(topMap);
+        CompletableFuture<String> loadFuture = MinigamesAPI.getWorldManager().loadAndGenerateMap(topMap);
 
         loadFuture.whenComplete((c, e) -> {
             if(e != null) e.printStackTrace();
@@ -33,7 +33,7 @@ public class GameStartCountdown extends GameCountdown<BridgeTeam, BridgeUser> {
 
             OffloadTask.offloadSync(() -> {
                 for (Player players : CorePlugin.getAllPlayers()) {
-                    players.teleport(new Location(Bukkit.getWorld(topMap), 0,0,0));
+                    players.teleport(new Location(Bukkit.getWorld(c), 0,0,0));
                 }
 
                 getGame().setGameState(GameState.IN_GAME);

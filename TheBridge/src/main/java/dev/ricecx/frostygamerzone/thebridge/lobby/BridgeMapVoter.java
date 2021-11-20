@@ -14,6 +14,6 @@ public class BridgeMapVoter extends MapVoterManager<BridgeTeam, BridgeUser> {
 
     @Override
     public void onVote(GameUser user, String map) {
-
+        user.getPlayer().sendMessage("You have voted for map " + map);
     }
 }

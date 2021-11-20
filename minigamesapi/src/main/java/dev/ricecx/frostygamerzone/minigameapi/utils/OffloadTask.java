@@ -4,6 +4,7 @@ import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import org.bukkit.Bukkit;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class OffloadTask {
@@ -22,5 +23,9 @@ public class OffloadTask {
 
     public static void offloadSync(Runnable runnable) {
         Bukkit.getScheduler().runTask(MinigamesAPI.getMinigamesPlugin(), runnable);
+    }
+
+    public static void timer(Consumer<CancelTask> consumer, int time, TimeUnit timeUnit) {
+
     }
 }
