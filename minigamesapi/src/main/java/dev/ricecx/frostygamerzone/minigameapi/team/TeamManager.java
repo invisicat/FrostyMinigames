@@ -27,4 +27,21 @@ public abstract class TeamManager<U extends GameUser, T extends Team<U>> {
 
         return team.getTeamID();
     }
+
+    public <v extends Team<v> & GameUser> T getPlayerTeam(U user) {
+        for (T team : registeredTeams.values()) {
+            if(team.getPlayers().contains(user)) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    public void addPlayerToTeam(U user, Team<U> team) {
+        for (T t : registeredTeams.values()) {
+            t.removePlayer(user);
+        }
+
+        team.addPlayer(user);
+    }
 }

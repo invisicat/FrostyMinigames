@@ -13,6 +13,11 @@ public interface GameUser extends FrostUser {
         return (Game<T,U>) MinigamesAPI.getGameManager().getGame(getGame());
     }
 
+
+    default <T extends Game<?,?>> T getGameObject(Class<T> clazz) {
+        return clazz.cast(getGameObject());
+    }
+
     default String getGame() {
         return MinigamesAPI.getUserManager().belongsTo(this);
     }

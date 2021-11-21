@@ -9,6 +9,7 @@ import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.lobby.TeamSelect;
 import dev.ricecx.frostygamerzone.minigameapi.lobby.core.AbstractLobby;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
+import dev.ricecx.frostygamerzone.thebridge.TheBridgeGame;
 import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeLobbyBoard;
 import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeLobbyPreGameBoard;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
@@ -82,8 +83,8 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
     @Override
     public void chooseTeam(GameUser user, BridgeTeam team) {
 
-        team.addPlayer(Users.getUser(user, BridgeUser.class));
+        user.getGameObject(TheBridgeGame.class).getTeamManager().addPlayerToTeam((BridgeUser) user, team);
 
-        MinigamesAPI.broadcastGame(user.getGame(), String.format("%s has joined team %s", user.getName(), team.getDisplayName()));
+        MinigamesAPI.broadcastGame(user.getGame(), String.format("&a%s &7has joined team %s", user.getName(), team.getDisplayName()));
     }
 }

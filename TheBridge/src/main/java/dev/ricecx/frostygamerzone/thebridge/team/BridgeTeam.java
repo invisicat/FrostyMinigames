@@ -1,21 +1,32 @@
 package dev.ricecx.frostygamerzone.thebridge.team;
 
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
+import dev.ricecx.frostygamerzone.minigameapi.map.MapMetaConsumer;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
+import dev.ricecx.frostygamerzone.minigameapi.team.TeamColor;
+import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapManager;
+import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapMeta;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 
-public class BridgeTeam extends Team<BridgeUser> {
+@Getter
+@Setter
+public class BridgeTeam extends Team<BridgeUser> implements MapMetaConsumer<BridgeMapMeta> {
 
     private Location spawnLocation;
     private Location nexusLocation;
 
     private int nexusHealth = 100;
 
-    public BridgeTeam(int size) {
+    public BridgeTeam(int size, TeamColor color) {
         super(size);
+        setTeamColor(color);
     }
 
 
@@ -55,7 +66,16 @@ public class BridgeTeam extends Team<BridgeUser> {
     }
 
     @Override
+    public void applyConfigMapper(BridgeMapMeta mapMeta) {
+        // we use team colors to map :P
+        LoggingUtils.info("Applying config mapper to " + getTeamID());
+        setNexusLocation(getTeamMappedMethod(this, "nexus", mapMeta, Location.class));
+        setSpawnLocation(getTeamMappedMethod(this, "spawn", mapMeta, Location.class));
+    }
+
+    @Override
     public Location getSpawn() {
         return spawnLocation;
     }
+
 }

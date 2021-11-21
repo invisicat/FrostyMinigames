@@ -19,6 +19,9 @@ import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class WorldManager implements SlimeAPI {
 
@@ -32,11 +35,38 @@ public class WorldManager implements SlimeAPI {
     public CompletableFuture<SlimeWorld> loadMap(String name) {
         return OffloadTask.offload((future) -> {
             try {
-                future.complete(loadWorld(name));
+                SlimeWorld world = loadWorld(name);
+
+                future.complete(world);
             } catch (CorruptedWorldException | NewerFormatException | WorldInUseException | UnknownWorldException | IOException e) {
                 e.printStackTrace();
             }
         });
+    }
+
+
+
+    public void loadGeneratedMapSync(String name, Consumer<String> mapName) {
+        AtomicReference<String> ranName = new AtomicReference<>();
+
+        loadMap(name).thenAccept((s) -> OffloadTask.offloadSync(() -> {
+            generateRandomMap(s, ranName::set);
+            mapName.accept(ranName.get());
+        }));
+    }
+
+    public CompletableFuture<String> loadAndGenerateRandomizedMap(String name) {
+        CompletableFuture<String> doneTask = new CompletableFuture<>();
+        CompletableFuture<SlimeWorld> futureWorld = loadMap(name);
+
+        futureWorld.thenApply((world) -> {
+            AtomicReference<String> wrld = new AtomicReference<>();
+            OffloadTask.offloadSync(() -> MinigamesAPI.getWorldManager().generateRandomMap(world, wrld::set));
+
+            return wrld.get();
+        }).thenAccept(doneTask::complete);
+
+        return doneTask;
     }
 
     /**
@@ -56,8 +86,15 @@ public class WorldManager implements SlimeAPI {
 
     @Override
     public void generateMap(SlimeWorld world) {
-        // we'll need to clone and generate here :P
         MinigamesAPI.getSlimePlugin().generateWorld(world);
+    }
+
+    @Override
+    public void generateRandomMap(SlimeWorld world, Consumer<String> generatedNameCallback) {
+        SlimeWorld clonedWorld = world.clone(generateMapName());
+
+        generateMap(clonedWorld);
+        generatedNameCallback.accept(clonedWorld.getName());
     }
 
     @Override
@@ -67,15 +104,19 @@ public class WorldManager implements SlimeAPI {
         return MinigamesAPI.getSlimePlugin().loadWorld(fileLoader, name, true, generateMapProperties());
     }
 
+    private String generateMapName() {
+        return "mini-tb-" + ThreadLocalRandom.current().nextInt(3,500);
+    }
+
     @Override
     public SlimePropertyMap generateMapProperties() {
         // fetch from database of sorts.
         SlimePropertyMap properties = new SlimePropertyMap();
 
         properties.setValue(SlimeProperties.DIFFICULTY, "normal");
-        properties.setValue(SlimeProperties.SPAWN_X, -57);
-        properties.setValue(SlimeProperties.SPAWN_Y, 41);
-        properties.setValue(SlimeProperties.SPAWN_Z, -164);
+        properties.setValue(SlimeProperties.SPAWN_X, 0);
+        properties.setValue(SlimeProperties.SPAWN_Y, 0);
+        properties.setValue(SlimeProperties.SPAWN_Z, 0);
         properties.setValue(SlimeProperties.ALLOW_ANIMALS, false);
         properties.setValue(SlimeProperties.ALLOW_MONSTERS, false);
         properties.setValue(SlimeProperties.DRAGON_BATTLE, false);

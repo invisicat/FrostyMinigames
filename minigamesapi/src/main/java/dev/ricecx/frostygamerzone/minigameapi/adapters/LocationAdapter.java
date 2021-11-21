@@ -1,5 +1,6 @@
 package dev.ricecx.frostygamerzone.minigameapi.adapters;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,9 +64,9 @@ public class LocationAdapter implements JsonDeserializer<Location>, JsonSerializ
         }
 
         World worldInstance = Bukkit.getWorld( world.getAsString() );
-        if (worldInstance == null) {
-            throw new IllegalArgumentException("Unknown/not loaded world");
-        }
+//        if (worldInstance == null) {
+//            throw new IllegalArgumentException("Unknown/not loaded world");
+//        }
 
         return new Location( worldInstance, x.getAsDouble(), y.getAsDouble(), z.getAsDouble(), yaw.getAsFloat(), pitch.getAsFloat() );
 
@@ -75,6 +76,7 @@ public class LocationAdapter implements JsonDeserializer<Location>, JsonSerializ
     public JsonElement serialize( Location location, Type type, JsonSerializationContext jsonSerializationContext ) {
 
         final JsonObject obj = new JsonObject();
+        Preconditions.checkNotNull(location.getWorld(), "A null world cannot be serialized, maybe use a lazy location");
         obj.addProperty( "world", location.getWorld().getName() );
         obj.addProperty( "x", location.getX() );
         obj.addProperty( "y", location.getY() );

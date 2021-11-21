@@ -7,9 +7,11 @@ public interface MapManager<T extends MapMeta> {
 
     Map<String, T> loadMaps();
 
+    void saveMap(MapMeta mapMeta);
+
     MapMeta getMapMeta(String name);
 
-    <T extends MapMeta> T getMap(String name);
+    <V extends MapMeta> V getMap(String name);
 
 
     void loadMapsIntoCache();

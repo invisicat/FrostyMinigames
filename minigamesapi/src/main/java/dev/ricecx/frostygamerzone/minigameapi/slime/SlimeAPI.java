@@ -10,15 +10,19 @@ import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public interface SlimeAPI {
 
     void teleport(SlimeWorld world, Player player);
 
     CompletableFuture<String> loadAndGenerateMap(String name);
+    CompletableFuture<String> loadAndGenerateRandomizedMap(String name);
 
 
     void generateMap(SlimeWorld world);
+
+    void generateRandomMap(SlimeWorld world, Consumer<String> generatedNameCallback);
 
     SlimeWorld loadWorld(String name) throws CorruptedWorldException, NewerFormatException, WorldInUseException, UnknownWorldException, IOException;
 

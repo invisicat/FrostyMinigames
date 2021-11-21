@@ -29,7 +29,15 @@ public abstract class AbstractMapManager<T extends MapMeta> implements MapManage
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends MapMeta> T getMap(String name) {
-        return ((T) mapsCache.getIfPresent(name));
+    public <V extends MapMeta> V getMap(String name) {
+        V meta = ((V) mapsCache.getIfPresent(name));
+        if(meta == null) {
+            Map<String, T> newMapMeta = loadMaps();
+            meta = (V) newMapMeta.get(name);
+
+            mapsCache.invalidateAll();
+        }
+
+        return meta;
     }
 }

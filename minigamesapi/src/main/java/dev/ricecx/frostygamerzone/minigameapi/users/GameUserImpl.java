@@ -16,9 +16,10 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Setter
-public class GameUserImpl implements GameUser {
+public abstract class GameUserImpl implements GameUser {
 
     @Getter
     private final String name;
@@ -26,6 +27,7 @@ public class GameUserImpl implements GameUser {
     @Getter private Rank rank;
 
     @Getter private GameUserStatus gameUserStatus;
+
 
     public GameUserImpl(String name, UUID uuid) {
         this.name = name;
@@ -47,6 +49,7 @@ public class GameUserImpl implements GameUser {
             return rs;
         });
 
+        loadUser();
         waitLoader.verifyResponse(true);
     }
 
@@ -71,8 +74,10 @@ public class GameUserImpl implements GameUser {
             MinigamesAPI.getGameManager().addPlayerToGame(player.getUniqueId(), gameServer);
             Bukkit.getPluginManager().callEvent(new GameJoinEvent(this, gameServer));
         });
-
     }
+
+
+    public abstract void loadUser();
 
     @Override
     public void save() {

@@ -33,12 +33,10 @@ public class BridgeTeamManager extends TeamManager<BridgeUser, BridgeTeam> {
         if(blueMeta != null) blueMeta.setColor(Color.BLUE);
         blueHelmet.setItemMeta(blueMeta);
 
-        BridgeTeam redTeam = new BridgeTeam(16);
-        BridgeTeam bleuTeam = new BridgeTeam(16);
+        BridgeTeam redTeam = new BridgeTeam(16, TeamColor.RED);
+        BridgeTeam bleuTeam = new BridgeTeam(16, TeamColor.BLUE);
 
         redTeam.setTeamItem(redHelmet);
-        redTeam.setTeamColor(TeamColor.RED);
-        bleuTeam.setTeamColor(TeamColor.BLUE);
         bleuTeam.setTeamItem(blueHelmet);
 
         teams.put("red", addTeam(redTeam));

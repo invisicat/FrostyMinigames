@@ -99,7 +99,10 @@ public class MinigamesAPI {
         scoreboardModule = new ScoreboardModule();
 
         getMapManager().loadMapsIntoCache();
-        OffloadTask.offloadSync(() -> getWorldManager().loadMap("final-lobby").whenComplete((sw, i) -> getWorldManager().setFollowingMapProperties(sw.getName())));
+        OffloadTask.offloadSync(() -> getWorldManager().loadMap("final-lobby").thenApply((sw) -> {
+            getWorldManager().generateMap(sw);
+            return sw;
+        }).whenComplete((sw, i) -> getWorldManager().setFollowingMapProperties(sw.getName())));
         new ChatModule();
         new GUIModule();
 
@@ -111,17 +114,17 @@ public class MinigamesAPI {
     }
 
 
-    public static void broadcastGame(Game<?, ?> game, String ...message) {
+    public static void broadcastGame(Game<?, ?> game, String... message) {
         broadcastGame(game.getIdentifier(), message);
     }
 
-    public static void broadcastGame(String game, String ...message) {
+    public static void broadcastGame(String game, String... message) {
         for (Player player : getGameManager().getAllPlayersInGame(game)) {
             player.sendMessage(Utils.color(message));
         }
     }
 
-    public static void broadcast(String ...messages) {
+    public static void broadcast(String... messages) {
         for (Player player : CorePlugin.getAllPlayers()) {
             player.sendMessage(Utils.color(messages));
         }
@@ -129,5 +132,9 @@ public class MinigamesAPI {
 
     public static MinigamesPlugin getMinigamesPlugin() {
         return MinigamesPlugin.getPlugin(MinigamesPlugin.class);
+    }
+
+    public static <T extends MapManager<?>> T getMapManager(Class<T> man) {
+        return man.cast(getMapManager());
     }
 }

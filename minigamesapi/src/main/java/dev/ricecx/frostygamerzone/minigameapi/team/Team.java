@@ -59,7 +59,7 @@ public abstract class Team<T extends GameUser> {
     }
 
     public String getDisplayName() {
-        return teamColor.getName();
+        return teamColor.getChatColor() + teamColor.getName();
     }
 
     @Override

@@ -2,9 +2,11 @@ package dev.ricecx.frostygamerzone.thebridge.map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.common.database.DatabaseManager;
 import dev.ricecx.frostygamerzone.minigameapi.adapters.LocationAdapter;
 import dev.ricecx.frostygamerzone.minigameapi.map.AbstractMapManager;
+import dev.ricecx.frostygamerzone.minigameapi.map.MapMeta;
 import org.bukkit.Location;
 
 import java.util.HashMap;
@@ -18,18 +20,27 @@ public class BridgeMapManager extends AbstractMapManager<BridgeMapMeta> {
     public Map<String, BridgeMapMeta> loadMaps() {
         Map<String, BridgeMapMeta> maps = new HashMap<>();
         DatabaseManager.getSQLUtils().executeQuery("SELECT * FROM mapmeta WHERE game = ?", (ps) -> ps.setString(1, "thebridge"),(rs) -> {
-            if(rs.next()) {
-                final BridgeMapMeta map = new BridgeMapMetaImpl();
+            while(rs.next()) {
+                BridgeMapMetaImpl map = gson.fromJson(rs.getString("meta"), BridgeMapMetaImpl.class);
 
                 map.setName(rs.getString("name"));
-                map.setLastModified(rs.getLong("last_modified"));
+                map.setLastModified(rs.getTimestamp("last_modified").getTime());
                 map.setVersion(rs.getInt("version"));
-                map.setMapMeta(gson.fromJson(rs.getString("meta"), BridgeMap.class));
+
+                LoggingUtils.info("Found map meta for " + map.getName());
                 maps.put(map.getName(), map);
             }
             return rs;
         });
 
         return maps;
+    }
+
+    @Override
+    public void saveMap(MapMeta mapMeta) {
+        DatabaseManager.getSQLUtils().executeUpdate("UPDATE mapmeta SET meta = ? WHERE name = ?", (ps) -> {
+            ps.setString(1, gson.toJson(mapMeta));
+            ps.setString(2, mapMeta.getName());
+        });
     }
 }
