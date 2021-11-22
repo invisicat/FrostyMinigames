@@ -2,6 +2,7 @@ package dev.ricecx.frostygamerzone.minigameapi.game;
 
 
 import dev.ricecx.frostygamerzone.bukkitapi.LazyLocation;
+import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.countdown.GameCountdown;
 import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
@@ -24,6 +25,10 @@ import java.util.function.Consumer;
  */
 public interface Game<T extends Team<U>, U extends GameUser> {
 
+
+    long getStartTime();
+    void setStartTime(long time);
+
     String getPrefix();
     String getIdentifier();
     void setIdentifier(String identifier);
@@ -31,6 +36,8 @@ public interface Game<T extends Team<U>, U extends GameUser> {
     void setGameState(GameState newGameState);
     MapVoter getMapVoter();
 
+    String getTemplateMap();
+    void setTemplateMap(String map);
     World getWorld();
     void setWorld(World world);
 
@@ -57,8 +64,15 @@ public interface Game<T extends Team<U>, U extends GameUser> {
      */
     void applyMapMeta(MapMeta meta);
 
+    void onStartGame();
+    void onPlayerStartGame(U player);
     void endGame();
 
+
+    @SuppressWarnings("unchecked")
+    default <b extends GameUser> b getPlayer(GameUser user) {
+        return (b) user;
+    }
 
     default void teleport(Location location, GameUser ...players) {
         for (GameUser player : players) {

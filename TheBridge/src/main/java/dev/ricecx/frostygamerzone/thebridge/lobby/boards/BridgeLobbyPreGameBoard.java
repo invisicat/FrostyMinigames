@@ -1,6 +1,7 @@
 package dev.ricecx.frostygamerzone.thebridge.lobby.boards;
 
 import dev.ricecx.frostygamerzone.bukkitapi.scoreboard.FrostBoard;
+import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
@@ -12,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 public class BridgeLobbyPreGameBoard extends FrostBoard {
 
     private final Game<BridgeTeam, BridgeUser> game;
+    private final BridgeUser user;
 
 
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -21,6 +23,7 @@ public class BridgeLobbyPreGameBoard extends FrostBoard {
         super(player.getPlayer(), "&e&lT&6&lh&e&le &6&lB&e&lr&6&li&e&ld&6&lg&e&le");
 
         game = player.getGameObject();
+        user = Users.getUser(player, BridgeUser.class);
     }
 
     @Override
@@ -32,7 +35,7 @@ public class BridgeLobbyPreGameBoard extends FrostBoard {
                 "&7Status: &eVoting",
                 "&7Selected map: &6" + "Deep Jungle",
                 " ",
-                "&7Selected kit: " + "&aArcher",
+                "&7Selected kit: " + "&a" + user.getKit().getName(),
                 " ",
                 String.format("&7Players: (%d/%d)", game.getPlayersIngame(), game.getMaxPlayers()),
                 " ",

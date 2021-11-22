@@ -24,10 +24,12 @@ public abstract class AbstractGame<U extends GameUser, T extends Team<U>> implem
     private GameCountdown<T, U> gameCountdown;
     private MapVoter mapVoter;
     private int maxPlayers;
+    private long startTime;
 
     private String identifier;
     private MapMeta mapMeta;
     private World world;
+    private String templateMap;
 
     public AbstractGame() {
         gameState = GameState.WAITING;

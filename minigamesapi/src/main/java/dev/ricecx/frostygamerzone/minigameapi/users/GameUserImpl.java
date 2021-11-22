@@ -25,8 +25,11 @@ public abstract class GameUserImpl implements GameUser {
     private final String name;
     @Getter private final UUID UUID;
     @Getter private Rank rank;
+    @Getter private int coins;
+    @Getter private int level;
+    @Getter private int id;
 
-    @Getter private GameUserStatus gameUserStatus;
+    @Getter @Setter private GameUserStatus gameUserStatus;
 
 
     public GameUserImpl(String name, UUID uuid) {
@@ -42,10 +45,25 @@ public abstract class GameUserImpl implements GameUser {
             return;
         }
 
-        DatabaseManager.getSQLUtils().executeQuery("SELECT primary_group FROM luckperms_players WHERE uuid = ?", (ps) -> ps.setString(1, getUUID().toString()), (rs) -> {
+        DatabaseManager.getSQLUtils().executeQuery("SELECT primary_group FROM luckperms_players WHERE uuid = ?", (ps) ->  {
+            ps.setString(1, getUUID().toString());
+        }, (rs) -> {
             if(rs.next()) {
+
                 setRank(Rank.fromName(rs.getString("primary_group")));
+                if(getRank() == null)
+                    setRank(Rank.MEMBER);
             }
+            return rs;
+        });
+        
+        DatabaseManager.getSQLUtils().executeQuery("SELECT * FROM global WHERE uuid = ?", (ps) -> ps.setString(1, getUUID().toString()), (rs) -> {
+            if(rs.next()) {
+                setCoins(rs.getInt("coins"));
+                setLevel(rs.getInt("level"));
+                setId(rs.getInt("id"));
+            }
+            
             return rs;
         });
 

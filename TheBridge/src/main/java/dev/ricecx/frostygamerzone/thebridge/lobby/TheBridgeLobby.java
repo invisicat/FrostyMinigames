@@ -1,6 +1,5 @@
 package dev.ricecx.frostygamerzone.thebridge.lobby;
 
-import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.bukkitapi.ItemBuilder;
 import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
@@ -9,8 +8,9 @@ import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.lobby.TeamSelect;
 import dev.ricecx.frostygamerzone.minigameapi.lobby.core.AbstractLobby;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
+import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
 import dev.ricecx.frostygamerzone.thebridge.TheBridgeGame;
-import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeLobbyBoard;
+import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeGameBoard;
 import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeLobbyPreGameBoard;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
@@ -39,6 +39,7 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
     private void onPlayerItemInteract(PlayerInteractEvent evt) {
         if (evt.hasItem() && (evt.getAction() == Action.RIGHT_CLICK_AIR || evt.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             onItemInteract(Users.getUser(evt.getPlayer(), GameUser.class), evt.getItem());
+            onItemITT(Users.getUser(evt.getPlayer(), GameUser.class), evt.getItem());
         }
     }
 
@@ -60,12 +61,14 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
         if(game.getGameState() == GameState.WAITING) {
             MinigamesAPI.getScoreboardModule().provideScoreboard(user.getPlayer(), new BridgeLobbyPreGameBoard(user));
         } else {
-            MinigamesAPI.getScoreboardModule().provideScoreboard(user.getPlayer(), new BridgeLobbyBoard(user));
+            MinigamesAPI.getScoreboardModule().provideScoreboard(user.getPlayer(), new BridgeGameBoard(game.getPlayer(user)));
 
         }
-        user.getPlayer().teleport(new Location(Bukkit.getWorld("final-lobby"), 30,83,-51));
 
-        user.getPlayer().playSound(user.getPlayer().getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 1);
+        OffloadTask.offloadSync(() -> {
+            user.getPlayer().teleport(new Location(Bukkit.getWorld("final-lobby"), 30,83,-51));
+            user.getPlayer().playSound(user.getPlayer().getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 1);
+        });
     }
 
     private void giveLobbyVotingItems(Player player, Game<BridgeTeam, BridgeUser> game) {
@@ -87,4 +90,12 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
 
         MinigamesAPI.broadcastGame(user.getGame(), String.format("&a%s &7has joined team %s", user.getName(), team.getDisplayName()));
     }
+
+    private void onItemITT(GameUser user, ItemStack itemStack) {
+        if(itemStack.getType().equals(Material.PAPER)) {
+            BridgeMapVoter voter = (BridgeMapVoter) user.getGameObject().getMapVoter();
+            voter.openVoteGUI(user);
+        }
+    }
+
 }

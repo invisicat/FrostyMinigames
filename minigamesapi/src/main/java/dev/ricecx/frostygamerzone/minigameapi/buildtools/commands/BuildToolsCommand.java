@@ -2,6 +2,7 @@ package dev.ricecx.frostygamerzone.minigameapi.buildtools.commands;
 
 import dev.ricecx.frostygamerzone.bukkitapi.commands.Command;
 import dev.ricecx.frostygamerzone.bukkitapi.commands.CommandInfo;
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapMeta;
 import org.bukkit.Location;
@@ -23,7 +24,7 @@ public class BuildToolsCommand implements Command {
     private final MapMeta map;
 
     public BuildToolsCommand(Class<? extends MapMeta> clazz) {
-        System.out.println("BUILD TOOLS " + clazz.getName());
+        LoggingUtils.info("Loaded Builds tools for: " + clazz.getSimpleName());
         map = createObject(clazz);
         for (Field field : clazz.getDeclaredFields()) {
             System.out.println("FIELD: " + field.getName());

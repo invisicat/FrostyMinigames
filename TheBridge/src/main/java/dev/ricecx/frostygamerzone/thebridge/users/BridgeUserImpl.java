@@ -6,7 +6,6 @@ import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUserImpl;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -20,12 +19,23 @@ public class BridgeUserImpl extends GameUserImpl implements BridgeUser {
 
     public BridgeUserImpl(String name, UUID uuid) {
         super(name, uuid);
-        System.out.println("MAKING USER " + name);
+
     }
 
     @Override
     public void loadUser() {
 
+        DatabaseManager.getSQLUtils().executeQuery( "INSERT INTO thebridge_users (id, uuid) VALUES(?, ?) ON CONFLICT (uuid) DO NOTHING RETURNING *", (ps -> {
+            ps.setInt(1, getId());
+            ps.setString(2, getUUID().toString());
+        }), (rs) -> {
+            if(rs.next()) {
+                TheBridgeKits kit = TheBridgeKits.from(rs.getString("equipped_kit"));
+                if(kit == null) kit = TheBridgeKits.WARRIOR;
+                setKit(kit);
+            }
+            return rs;
+        });
     }
 
 }

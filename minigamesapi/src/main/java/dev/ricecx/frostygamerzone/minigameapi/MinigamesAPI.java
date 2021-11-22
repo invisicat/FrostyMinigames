@@ -18,6 +18,7 @@ import dev.ricecx.frostygamerzone.minigameapi.game.GameManager;
 import dev.ricecx.frostygamerzone.minigameapi.game.GameManagerListener;
 import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.inventory.InventoryClicker;
+import dev.ricecx.frostygamerzone.minigameapi.kits.KitRegistry;
 import dev.ricecx.frostygamerzone.minigameapi.listeners.MinigamesListener;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapManager;
 import dev.ricecx.frostygamerzone.minigameapi.mapvoting.MapVoter;
@@ -80,6 +81,9 @@ public class MinigamesAPI {
     private static ScoreboardModule scoreboardModule;
     private static PlayerVisibilityTask playerVisibilityTask;
     private static InventoryClicker inventoryClicker;
+    @Getter
+    @Setter
+    private static KitRegistry<?, ?> kitRegistry;
 
 
     public static void loadAPI() {
@@ -136,5 +140,8 @@ public class MinigamesAPI {
 
     public static <T extends MapManager<?>> T getMapManager(Class<T> man) {
         return man.cast(getMapManager());
+    }
+    public static <T extends KitRegistry<?, ?>> T getKitRegistry(Class<T> man) {
+        return man.cast(getKitRegistry());
     }
 }

@@ -44,4 +44,15 @@ public abstract class TeamManager<U extends GameUser, T extends Team<U>> {
 
         team.addPlayer(user);
     }
+
+    public T getAvailableTeam() {
+        T availableTeam = null;
+
+        for (T team : getRegisteredTeams().values()) {
+            if(availableTeam == null || availableTeam.getPlayers().size() < team.getPlayers().size()) availableTeam = team;
+
+        }
+
+        return availableTeam;
+    }
 }

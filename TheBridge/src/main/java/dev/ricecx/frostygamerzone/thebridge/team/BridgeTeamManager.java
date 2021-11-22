@@ -3,6 +3,7 @@ package dev.ricecx.frostygamerzone.thebridge.team;
 import com.google.common.collect.Maps;
 import dev.ricecx.frostygamerzone.bukkitapi.ItemBuilder;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
+import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamColor;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamManager;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
@@ -41,5 +42,9 @@ public class BridgeTeamManager extends TeamManager<BridgeUser, BridgeTeam> {
 
         teams.put("red", addTeam(redTeam));
         teams.put("blue", addTeam(bleuTeam));
+    }
+
+    public BridgeTeam getTeam(String name) {
+        return getRegisteredTeams().get(teams.get(name));
     }
 }

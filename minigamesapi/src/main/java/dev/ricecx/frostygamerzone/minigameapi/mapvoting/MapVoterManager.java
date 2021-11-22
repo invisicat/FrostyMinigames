@@ -1,6 +1,7 @@
 package dev.ricecx.frostygamerzone.minigameapi.mapvoting;
 
 import com.google.common.collect.Maps;
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.Minigame;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public abstract class MapVoterManager<T extends Team<U>, U extends GameUser> implements MapVoter {
 
-    private final Set<String> maps;
+    protected final Set<String> maps;
 
     private final Map<GameUser, String> votes = Maps.newConcurrentMap();
     private final Game<T, U> game;
@@ -39,9 +40,36 @@ public abstract class MapVoterManager<T extends Team<U>, U extends GameUser> imp
     @Override
     public String getTopMap() {
         return getCount(votes.values().parallelStream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
+       // return getMax();
+    }
+
+
+    /**
+     * @implNote this is garbage, refactor this hack.
+     * @deprecated method is garbage
+     */
+    private String getMax() {
+        String max = null;
+        Map<String, Integer> highestMaps = new HashMap<>();
+        for (String value : votes.values()) {
+            int prevVal = highestMaps.getOrDefault(value, 0);
+            highestMaps.put(value, prevVal);
+        }
+        int maxValueInMap = (Collections.max(highestMaps.values()));  // This will return max value in the HashMap
+        for (Map.Entry<String, Integer> entry : highestMaps.entrySet()) {  // Iterate through HashMap
+            if (entry.getValue() == maxValueInMap) {
+                max = entry.getKey();
+                break;
+            }
+        }
+        return max;
     }
 
     private String getCount(Map<String, Long> map) {
+        for (Map.Entry<String, Long> stringLongEntry : map.entrySet()) {
+            LoggingUtils.info(stringLongEntry.getKey() + " " + stringLongEntry.getValue());
+        }
+
         return Collections.max(map.entrySet(), Comparator.comparingLong(Map.Entry::getValue)).getKey();
     }
 
