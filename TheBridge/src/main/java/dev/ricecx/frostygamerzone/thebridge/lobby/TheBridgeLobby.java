@@ -24,10 +24,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTeam>, Listener {
 
@@ -35,9 +32,10 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
     @Getter Map<ItemStack, BridgeTeam> teamSelector = new HashMap<>();
 
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerItemInteract(PlayerInteractEvent evt) {
-        if (evt.hasItem() && (evt.getAction() == Action.RIGHT_CLICK_AIR || evt.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+        if (evt.getAction() == Action.RIGHT_CLICK_AIR || evt.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if(evt.getItem() == null) return;
             onItemInteract(Users.getUser(evt.getPlayer(), GameUser.class), evt.getItem());
             onItemITT(Users.getUser(evt.getPlayer(), GameUser.class), evt.getItem());
         }
@@ -76,6 +74,7 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
         BridgeTeam blue = game.getTeamManager().getRegisteredTeams().get(game.getTeamManager().getTeams().get("blue"));
 
         player.getInventory().setItem(0, new ItemBuilder(Material.PAPER).setName("&2&lVote for map").toItemStack());
+        player.getInventory().setItem(1, new ItemBuilder(Material.GOLDEN_SWORD).setName("&6&lChange Kit").toItemStack());
         player.getInventory().setItem(3, addTeamSelector(red.getTeamItem(), red));
         player.getInventory().setItem(4, new ItemBuilder(Material.MAP).setName("&a&lRandom Team").toItemStack());
         player.getInventory().setItem(5, addTeamSelector(blue.getTeamItem(), blue));
@@ -95,6 +94,16 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
         if(itemStack.getType().equals(Material.PAPER)) {
             BridgeMapVoter voter = (BridgeMapVoter) user.getGameObject().getMapVoter();
             voter.openVoteGUI(user);
+        } else if(itemStack.getType().equals(Material.MAP)) {
+
+            Optional<BridgeTeam> randomTeam = user.getGameObject(TheBridgeGame.class).getTeamManager().getRandomTeam();
+
+            if(randomTeam.isPresent()) {
+                chooseTeam(user, randomTeam.get());
+            } else {
+                user.getPlayer().sendMessage("Teams are full.");
+            }
+
         }
     }
 

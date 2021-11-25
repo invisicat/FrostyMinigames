@@ -7,23 +7,35 @@ import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapMeta;
 
 import dev.ricecx.frostygamerzone.thebridge.countdowns.GameStartCountdown;
+import dev.ricecx.frostygamerzone.thebridge.gameevents.GracePeriod;
 import dev.ricecx.frostygamerzone.thebridge.lobby.BridgeMapVoter;
 import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeGameBoard;
 import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapMeta;
+import dev.ricecx.frostygamerzone.thebridge.modules.BridgeEventManager;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeamManager;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import lombok.Getter;
+import lombok.Setter;
 
 
 @Getter
+@Setter
 public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implements Game<BridgeTeam, BridgeUser> {
+
+
+    private boolean grace = false;
 
     public TheBridgeGame() {
         setTeamManager(new BridgeTeamManager(this));
         setGameCountdown(new GameStartCountdown(this));
         setMapVoter(new BridgeMapVoter(this));
+        setGameEventManager(new BridgeEventManager(this));
         setMaxPlayers(32);
+        //
+        getGameEventManager().registerEvent(
+                new GracePeriod()
+        );
     }
 
     @Override
@@ -43,6 +55,7 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
     @Override
     public void onStartGame() {
         setStartTime(System.currentTimeMillis());
+        getGameEventManager().start();
     }
 
     @Override

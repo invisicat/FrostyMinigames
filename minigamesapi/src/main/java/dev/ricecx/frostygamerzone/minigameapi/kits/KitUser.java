@@ -7,6 +7,8 @@ public interface KitUser<U, T> extends GameUser {
 
      T getKit();
 
+    void setKit(T kit);
+
     default void setHelmet(ItemStack helmet) {
         getPlayer().getInventory().setHelmet(helmet);
     }
@@ -20,7 +22,7 @@ public interface KitUser<U, T> extends GameUser {
     }
 
     default void setBoots(ItemStack boots) {
-        getPlayer().getInventory().setHelmet(boots);
+        getPlayer().getInventory().setBoots(boots);
     }
 
     default void clearInventory() {

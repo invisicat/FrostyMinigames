@@ -1,5 +1,6 @@
 package dev.ricecx.frostygamerzone.thebridge.map;
 
+import dev.ricecx.frostygamerzone.minigameapi.buildtools.annotations.LookAt;
 import dev.ricecx.frostygamerzone.minigameapi.map.TeamMapMetaImpl;
 import dev.ricecx.frostygamerzone.minigameapi.regions.Region;
 import lombok.Getter;
@@ -19,9 +20,10 @@ public class BridgeMapMetaImpl extends TeamMapMetaImpl implements BridgeMapMeta 
 
     private List<Location> shops;
 
+    @LookAt
     private List<Location> nexusLocations;
 
-    private List<Region> regions;
+    private List<Region<?>> regions;
 
 
     @Override

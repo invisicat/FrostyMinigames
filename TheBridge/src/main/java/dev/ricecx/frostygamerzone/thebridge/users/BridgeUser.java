@@ -11,7 +11,6 @@ import dev.ricecx.frostygamerzone.thebridge.kits.TheBridgeKit;
 public interface BridgeUser extends GameUser, KitUser<BridgeUser, TheBridgeKits> {
     Team<BridgeUser> getTeam();
 
-    void setKit(TheBridgeKits kit);
 
     void setTeam(Team<BridgeUser> team);
 

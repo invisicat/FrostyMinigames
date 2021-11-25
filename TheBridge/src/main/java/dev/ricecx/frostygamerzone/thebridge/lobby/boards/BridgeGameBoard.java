@@ -39,9 +39,9 @@ public class BridgeGameBoard extends FrostBoard {
                 " &7Players:&f " + Utils.color("&a" + teamManager.getTeam("blue").getPlayers().size()),
                 " &7Nexus:&f " + teamManager.getTeam("blue").getNexusHealth(),
                 " ",
-                "&6" + DurationFormatUtils.formatDuration(System.currentTimeMillis() - startTime, "mm:ss"),
-                "Map: " + "&6" + player.getGameObject().getTemplateMap(),
-                "Kit: " + "&6Traitor",
+                "&7Elapsed time: &6" + DurationFormatUtils.formatDuration(System.currentTimeMillis() - startTime, "mm:ss"),
+                "&7Map: " + "&6" + player.getGameObject().getTemplateMap(),
+                "&7Kit: " + "&6Traitor",
                 "",
                 "&bplay.frostynetwork.net"
         };

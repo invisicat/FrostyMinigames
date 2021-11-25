@@ -18,7 +18,7 @@ public class WarriorKit extends TheBridgeKit {
         return new ItemStack[] {
                 new ItemBuilder(Material.STONE_SWORD).toItemStack(),
                 null,
-                new ItemBuilder(Material.MELON).toItemStack()
+                new ItemBuilder(Material.MELON_SLICE).toItemStack()
         };
     }
 

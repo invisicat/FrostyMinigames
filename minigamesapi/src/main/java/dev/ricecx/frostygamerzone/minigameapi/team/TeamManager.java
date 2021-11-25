@@ -6,8 +6,10 @@ import lombok.Getter;
 import org.bukkit.Location;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class TeamManager<U extends GameUser, T extends Team<U>> {
 
@@ -54,5 +56,9 @@ public abstract class TeamManager<U extends GameUser, T extends Team<U>> {
         }
 
         return availableTeam;
+    }
+
+    public Optional<T> getRandomTeam() {
+        return getRegisteredTeams().values().stream().skip(ThreadLocalRandom.current().nextInt(getRegisteredTeams().size())).findFirst();
     }
 }

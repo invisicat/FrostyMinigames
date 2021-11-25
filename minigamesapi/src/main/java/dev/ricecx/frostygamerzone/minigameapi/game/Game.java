@@ -5,6 +5,7 @@ import dev.ricecx.frostygamerzone.bukkitapi.LazyLocation;
 import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.countdown.GameCountdown;
+import dev.ricecx.frostygamerzone.minigameapi.gameevents.GameEventManager;
 import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapMeta;
 import dev.ricecx.frostygamerzone.minigameapi.mapvoting.MapVoter;
@@ -23,21 +24,22 @@ import java.util.function.Consumer;
  * @param <T> team
  * @param <U> user
  */
-public interface Game<T extends Team<U>, U extends GameUser> {
+public interface Game<T extends Team<U>, U extends GameUser> extends Minigame {
 
 
     long getStartTime();
     void setStartTime(long time);
 
     String getPrefix();
-    String getIdentifier();
-    void setIdentifier(String identifier);
+
     GameState getGameState();
     void setGameState(GameState newGameState);
+
     MapVoter getMapVoter();
 
     String getTemplateMap();
     void setTemplateMap(String map);
+
     World getWorld();
     void setWorld(World world);
 
@@ -50,11 +52,13 @@ public interface Game<T extends Team<U>, U extends GameUser> {
     void setMaxPlayers(int maxPlayers);
 
     List<U> getPlayers();
-
     int getAllPlayersInTeams();
 
     GameCountdown<T, U> getGameCountdown();
     TeamManager<U, T> getTeamManager();
+
+    GameEventManager getGameEventManager();
+    void setGameEventManager(GameEventManager eventManager);
 
 
     /**

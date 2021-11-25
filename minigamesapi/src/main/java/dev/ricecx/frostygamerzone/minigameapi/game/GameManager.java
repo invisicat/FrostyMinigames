@@ -28,9 +28,8 @@ public class GameManager {
         String prefix = game.getPrefix() + (existingGames + 1);
 
         games.put(prefix, game);
-        MinigamesAPI.getCountdownManager().addCountdown(game.getGameCountdown());
         game.setIdentifier(prefix);
-        LoggingUtils.info("Creating game: " + prefix);
+        MinigamesAPI.getCountdownManager().addCountdown(game.getGameCountdown());
         return prefix;
     }
 

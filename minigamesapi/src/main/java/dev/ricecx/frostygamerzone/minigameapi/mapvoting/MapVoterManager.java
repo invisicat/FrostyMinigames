@@ -10,12 +10,13 @@ import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class MapVoterManager<T extends Team<U>, U extends GameUser> implements MapVoter {
 
-    protected final Set<String> maps;
+    protected Set<String> maps;
 
     private final Map<GameUser, String> votes = Maps.newConcurrentMap();
     private final Game<T, U> game;
@@ -39,10 +40,27 @@ public abstract class MapVoterManager<T extends Team<U>, U extends GameUser> imp
 
     @Override
     public String getTopMap() {
-        return getCount(votes.values().parallelStream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
+        if(votes.values().size() <= 0) {
+            return chooseRandomMap();
+        } else
+            return getCount(votes.values().parallelStream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
        // return getMax();
     }
 
+    private String chooseRandomMap() {
+        // TODO: bruh wtf fix this why is this copied like 20 times
+        if(maps.size() <= 0) maps.addAll(MinigamesAPI.getMapManager().getAllMaps().keySet());
+        LoggingUtils.info("Map pool size: " + maps.size());
+        int idx = ThreadLocalRandom.current().nextInt(maps.size());
+        int i = 0;
+        for (String map : maps) {
+            if(i == idx)
+                return map;
+            i++;
+        }
+
+        return null;
+    }
 
     /**
      * @implNote this is garbage, refactor this hack.

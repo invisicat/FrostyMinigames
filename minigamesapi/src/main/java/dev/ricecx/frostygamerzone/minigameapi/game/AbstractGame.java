@@ -3,6 +3,7 @@ package dev.ricecx.frostygamerzone.minigameapi.game;
 import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.countdown.GameCountdown;
+import dev.ricecx.frostygamerzone.minigameapi.gameevents.GameEventManager;
 import dev.ricecx.frostygamerzone.minigameapi.gamestate.GameState;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapMeta;
 import dev.ricecx.frostygamerzone.minigameapi.mapvoting.MapVoter;
@@ -30,6 +31,8 @@ public abstract class AbstractGame<U extends GameUser, T extends Team<U>> implem
     private MapMeta mapMeta;
     private World world;
     private String templateMap;
+
+    private GameEventManager gameEventManager;
 
     public AbstractGame() {
         gameState = GameState.WAITING;
@@ -61,5 +64,9 @@ public abstract class AbstractGame<U extends GameUser, T extends Team<U>> implem
         }
 
         return size;
+    }
+
+    public void broadcast(String ...message) {
+        MinigamesAPI.broadcastGame(this, message);
     }
 }

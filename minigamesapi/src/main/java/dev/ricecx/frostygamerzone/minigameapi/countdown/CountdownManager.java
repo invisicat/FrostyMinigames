@@ -24,7 +24,7 @@ public class CountdownManager {
         addCountdown(countdown);
     }
 
-    public void addCountdown(GameCountdown<?, ?> ...countdown) {
+    public synchronized void addCountdown(GameCountdown<?, ?> ...countdown) {
         for (GameCountdown<?, ?> gameCountdown : countdown) {
             countdowns.put(UUID.randomUUID(), gameCountdown);
         }
@@ -36,11 +36,10 @@ public class CountdownManager {
     }
 
     public void check() {
-
         for (Map.Entry<UUID, GameCountdown<?, ?>> countdown : countdowns.entrySet()) {
             if(!preconditions(countdown.getValue())) {
                 cancelRunnable(countdown.getKey());
-                return;
+                continue;
             }
 
             if(bukkitRunnables.get(countdown.getKey()) == null) {
