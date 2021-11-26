@@ -15,10 +15,15 @@ public interface BridgeMapMeta extends TeamMapMeta {
 
     List<Location> getShops();
 
-    List<Location> getNexusLocations();
+    void setTeamRedNexus(Location location);
+    void setTeamBlueNexus(Location location);
 
-    void setRegions(List<Region> regions);
-    List<Region> getRegions();
+    Location getTeamRedNexus();
+    Location getTeamBlueNexus();
+
+
+    void setRegions(List<Region<?>> regions);
+    List<Region<?>> getRegions();
 
     void setSpectatorSpawn(Location location);
 
@@ -26,7 +31,5 @@ public interface BridgeMapMeta extends TeamMapMeta {
     void setTeamRedSpawn(Location location);
 
     void setShops(List<Location> locations);
-
-    void setNexusLocations(List<Location> locations);
 
 }

@@ -134,6 +134,9 @@ public class WorldManager implements SlimeAPI {
         world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
         world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
         world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+        world.setGameRule(GameRule.DO_TRADER_SPAWNING, false);
+        world.setGameRule(GameRule.DO_PATROL_SPAWNING, false);
         world.setTime(1600);
     }
 }

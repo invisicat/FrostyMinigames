@@ -1,4 +1,4 @@
-package dev.ricecx.frostygamerzone.thebridge.lobby.boards;
+package dev.ricecx.frostygamerzone.thebridge.boards;
 
 import dev.ricecx.frostygamerzone.bukkitapi.scoreboard.FrostBoard;
 import dev.ricecx.frostygamerzone.bukkitapi.user.Users;

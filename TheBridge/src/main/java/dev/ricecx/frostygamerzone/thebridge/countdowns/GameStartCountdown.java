@@ -28,6 +28,7 @@ public class GameStartCountdown extends GameCountdown<BridgeTeam, BridgeUser> {
         MinigamesAPI.getWorldManager().loadGeneratedMapSync(topMap, (c) -> {
 
             BridgeMapMeta bridgeMapMeta = MinigamesAPI.getMapManager(BridgeMapManager.class).getMap(topMap);
+            MinigamesAPI.getWorldManager().setFollowingMapProperties(c);
             getGame().applyMapMeta(bridgeMapMeta);
             OffloadTask.offloadSync(() -> {
                 LoggingUtils.info("Map '" + topMap + "' has been generated with world name '" + c + "' for match " + getGame().getIdentifier());

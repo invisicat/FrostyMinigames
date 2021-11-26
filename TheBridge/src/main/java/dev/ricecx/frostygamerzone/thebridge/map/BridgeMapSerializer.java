@@ -32,9 +32,11 @@ public class BridgeMapSerializer implements JsonSerializer<BridgeMapMeta>, JsonD
         LoggingUtils.info("Deserialzing MAP");
 
 
-        map.setSpectatorSpawn(context.deserialize(mapObject.get("spawn_spectator"), Location.class));
+        map.setSpectatorSpawn(context.deserialize(mapObject.get("spectatorSpawn"), Location.class));
         map.setTeamBlueSpawn(context.deserialize(mapObject.get("teamBlueSpawn"), Location.class));
         map.setTeamRedSpawn(context.deserialize(mapObject.get("teamRedSpawn"), Location.class));
+        map.setTeamRedNexus(context.deserialize(mapObject.get("teamRedNexus"), Location.class));
+        map.setTeamBlueNexus(context.deserialize(mapObject.get("teamBlueNexus"), Location.class));
         map.setShops(context.deserialize(mapObject.get("shops"), locationType));
         map.setRegions(context.deserialize(mapObject.get("regions"), locationType));
 

@@ -21,7 +21,10 @@ public class BridgeMapMetaImpl extends TeamMapMetaImpl implements BridgeMapMeta 
     private List<Location> shops;
 
     @LookAt
-    private List<Location> nexusLocations;
+    private Location teamRedNexus;
+
+    @LookAt
+    private Location teamBlueNexus;
 
     private List<Region<?>> regions;
 
@@ -33,8 +36,8 @@ public class BridgeMapMetaImpl extends TeamMapMetaImpl implements BridgeMapMeta 
                 ", teamBlueSpawn=" + teamBlueSpawn +
                 ", teamRedSpawn=" + teamRedSpawn +
                 ", shops=" + shops +
-                ", nexusLocations=" + nexusLocations +
                 ", regions=" + regions +
                 '}';
     }
+
 }

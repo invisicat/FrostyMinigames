@@ -9,9 +9,9 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class WarriorKit extends TheBridgeKit {
-
-    @Getter private final TheBridgeKits kit = TheBridgeKits.WARRIOR;
+public class EnchanterKit extends TheBridgeKit {
+    @Getter
+    TheBridgeKits kit = TheBridgeKits.ENCHANTER;
 
     @Override
     public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
@@ -19,9 +19,7 @@ public class WarriorKit extends TheBridgeKit {
                 new ItemBuilder(Material.STONE_SWORD).toItemStack(),
                 new ItemBuilder(Material.WOODEN_PICKAXE).toItemStack(),
                 new ItemBuilder(Material.WOODEN_AXE).toItemStack(),
-                new ItemBuilder(Material.WOODEN_SHOVEL).toItemStack(),
                 new ItemBuilder(Material.CRAFTING_TABLE).toItemStack(),
         };
     }
-
 }

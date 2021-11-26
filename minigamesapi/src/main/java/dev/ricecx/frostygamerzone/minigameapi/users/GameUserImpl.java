@@ -30,6 +30,7 @@ public abstract class GameUserImpl implements GameUser {
     @Getter private int id;
 
     @Getter @Setter private GameUserStatus gameUserStatus;
+    @Getter @Setter private boolean spectating;
 
 
     public GameUserImpl(String name, UUID uuid) {
@@ -45,9 +46,7 @@ public abstract class GameUserImpl implements GameUser {
             return;
         }
 
-        DatabaseManager.getSQLUtils().executeQuery("SELECT primary_group FROM luckperms_players WHERE uuid = ?", (ps) ->  {
-            ps.setString(1, getUUID().toString());
-        }, (rs) -> {
+        DatabaseManager.getSQLUtils().executeQuery("SELECT primary_group FROM luckperms_players WHERE uuid = ?", (ps) -> ps.setString(1, getUUID().toString()), (rs) -> {
             if(rs.next()) {
 
                 setRank(Rank.fromName(rs.getString("primary_group")));

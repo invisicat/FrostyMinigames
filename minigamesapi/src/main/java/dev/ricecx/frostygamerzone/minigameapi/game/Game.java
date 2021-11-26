@@ -78,6 +78,13 @@ public interface Game<T extends Team<U>, U extends GameUser> extends Minigame {
         return (b) user;
     }
 
+
+    default Location getLocation(Location location) {
+        location.setWorld(getWorld());
+
+        return location;
+    }
+
     default void teleport(Location location, GameUser ...players) {
         for (GameUser player : players) {
             teleport(location, player.getPlayer());

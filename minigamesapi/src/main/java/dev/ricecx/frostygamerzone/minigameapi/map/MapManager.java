@@ -7,7 +7,12 @@ public interface MapManager<T extends MapMeta> {
 
     Map<String, T> loadMaps();
 
-    void saveMap(MapMeta mapMeta);
+    void saveMap(T mapMeta);
+
+    @SuppressWarnings("unchecked")
+    default void saveMap(Object meta) {
+        saveMap((T) meta);
+    }
 
     MapMeta getMapMeta(String name);
 

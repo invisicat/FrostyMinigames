@@ -9,6 +9,8 @@ import dev.ricecx.frostygamerzone.minigameapi.MinigamesPlugin;
 import dev.ricecx.frostygamerzone.minigameapi.buildtools.commands.BuildToolsCommand;
 import dev.ricecx.frostygamerzone.minigameapi.kits.KitRegistry;
 import dev.ricecx.frostygamerzone.thebridge.buildtools.SrvCommand;
+import dev.ricecx.frostygamerzone.thebridge.handler.FightHandler;
+import dev.ricecx.frostygamerzone.thebridge.handler.NexusHandler;
 import dev.ricecx.frostygamerzone.thebridge.kits.BridgeKitRegistry;
 import dev.ricecx.frostygamerzone.thebridge.lobby.TheBridgeLobby;
 import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapManager;
@@ -36,6 +38,10 @@ public final class TheBridgePlugin extends MinigamesPlugin implements UserRegist
 
         MinigamesAPI.getGameManager().setLobby(new TheBridgeLobby());
         MinigamesAPI.setKitRegistry(new BridgeKitRegistry());
+        MinigamesPlugin.getInstance().registerListeners(
+                new FightHandler(),
+                new NexusHandler()
+        );
 
         CorePlugin.getInstance().registerCommands(new SrvCommand());
         CorePlugin.getInstance().registerCommands(new BuildToolsCommand(BridgeMapMetaImpl.class));

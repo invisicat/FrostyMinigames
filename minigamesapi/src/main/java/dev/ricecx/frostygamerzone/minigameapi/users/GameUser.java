@@ -7,9 +7,16 @@ import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 
 public interface GameUser extends FrostUser {
     GameUserStatus getGameUserStatus();
+
     void setId(int id);
     int getId();
+
     void setGameUserStatus(GameUserStatus newStatus);
+
+    boolean isSpectating();
+    void setSpectating(boolean b);
+
+    void startRespawning();
 
     @SuppressWarnings("unchecked")
     default <T extends Team<U>, U extends GameUser> Game<T, U> getGameObject() {

@@ -4,8 +4,10 @@ import dev.ricecx.frostygamerzone.bukkitapi.commands.Command;
 import dev.ricecx.frostygamerzone.bukkitapi.commands.CommandInfo;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
+import dev.ricecx.frostygamerzone.minigameapi.buildtools.annotations.LookAt;
 import dev.ricecx.frostygamerzone.minigameapi.game.Minigame;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapMeta;
+import lombok.extern.java.Log;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +25,6 @@ public class BuildToolsCommand implements Command {
     private final Map<String, Field> singleFields = new HashMap<>();
     private final Map<String, Field> multiFields = new HashMap<>();
     private MapMeta map;
-    private MapMeta newMap;
     private final Class<? extends MapMeta> clazz;
 
     public BuildToolsCommand(Class<? extends MapMeta> clazz) {
@@ -61,8 +62,14 @@ public class BuildToolsCommand implements Command {
             Field field = singleFields.get(args[1]);
             if(field.getType().isAssignableFrom(Location.class)) {
                 commandSender.sendMessage("You have set a location for " + args[1]);
-                commandSender.sendMessage(dev.ricecx.frostygamerzone.minigameapi.utils.Styles.location(((Player) commandSender).getLocation()));
-                friendlySet(field, ((Player) commandSender).getLocation());
+                if(field.getAnnotation(LookAt.class) != null || field.getDeclaredAnnotation(LookAt.class) != null) {
+                    Location loc = ((Player) commandSender).getTargetBlock(null, 5).getLocation();
+                    friendlySet(field, loc);
+                    commandSender.sendMessage(dev.ricecx.frostygamerzone.minigameapi.utils.Styles.location(loc));
+                } else {
+                    friendlySet(field, ((Player) commandSender).getLocation());
+                    commandSender.sendMessage(dev.ricecx.frostygamerzone.minigameapi.utils.Styles.location(((Player)commandSender).getLocation()));
+                }
             }
         } else if(args[0].equalsIgnoreCase("add") && multiFields.containsKey(args[1])) {
             Field field = multiFields.get(args[1]);
@@ -90,18 +97,9 @@ public class BuildToolsCommand implements Command {
         a.setWorldTemplateName(player.getWorld().getName());
         a.setLastModified(System.currentTimeMillis());
 
-        for (Field declaredField : a.getClass().getFields()) {
-            LoggingUtils.info("Found field while saving " + declaredField.getName() + " A: " + friendlyGet(declaredField));
-        }
-
-        for (Field declaredField : a.getClass().getDeclaredFields()) {
-            LoggingUtils.info("Found declared field while saving " + declaredField.getName() + " A: " + friendlyGet(declaredField));
-        }
-        newMap = a;
-        LoggingUtils.info("bbba " + a.getClass());
         LoggingUtils.info(a.toString());
 
-        MinigamesAPI.getMapManager().saveMap(clazz.cast(a));
+        MinigamesAPI.getMapManager().saveMap(a);
     }
 
     private MapMeta combineMetas(MapMeta oldMeta, MapMeta newMeta) {
@@ -109,23 +107,31 @@ public class BuildToolsCommand implements Command {
         MapMeta combinedMeta = createObject(clazz);
 
         for (Field combinedField : combinedMeta.getClass().getDeclaredFields()) {
-            LoggingUtils.info("[Meta Combiner] Found Combiner Field: " + combinedField.getName());
             combinedFields.put(combinedField.getName(), combinedField);
         }
 
         for (Field field : oldMeta.getClass().getDeclaredFields()) {
-            LoggingUtils.info("[Meta Combiner] Found old field: " + field.getName());
-            friendlySet(combinedFields.get(field.getName()), friendlyGet(field));
+            try {
+                combinedFields.get(field.getName()).setAccessible(true);
+                field.setAccessible(true);
+                combinedFields.get(field.getName()).set(combinedMeta, field.get(oldMeta));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
 
         for (Field newMetaFields : newMeta.getClass().getDeclaredFields()) {
             if(friendlyGet(newMetaFields) == null) continue;
             LoggingUtils.info("[Meta Combiner] Found new field: " + newMetaFields.getName());
-            friendlySet(combinedFields.get(newMetaFields.getName()), friendlyGet(newMetaFields));
-        }
 
-        for (Field combinedField : combinedMeta.getClass().getDeclaredFields()) {
-            LoggingUtils.info("[Meta Combiner] Combined field: " + combinedField.getName() + " b: " + friendlyGet(combinedField));
+            try {
+                newMetaFields.setAccessible(true);
+                combinedFields.get(newMetaFields.getName()).setAccessible(true);
+                combinedFields.get(newMetaFields.getName()).set(combinedMeta, newMetaFields.get(newMeta));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            friendlySet(combinedFields.get(newMetaFields.getName()), friendlyGet(newMetaFields));
         }
 
         return combinedMeta;

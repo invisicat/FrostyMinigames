@@ -9,19 +9,18 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class WarriorKit extends TheBridgeKit {
-
-    @Getter private final TheBridgeKits kit = TheBridgeKits.WARRIOR;
+public class HealerKit extends TheBridgeKit {
+    @Getter
+    TheBridgeKits kit = TheBridgeKits.HEALER;
 
     @Override
     public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
         return new ItemStack[] {
-                new ItemBuilder(Material.STONE_SWORD).toItemStack(),
-                new ItemBuilder(Material.WOODEN_PICKAXE).toItemStack(),
-                new ItemBuilder(Material.WOODEN_AXE).toItemStack(),
-                new ItemBuilder(Material.WOODEN_SHOVEL).toItemStack(),
-                new ItemBuilder(Material.CRAFTING_TABLE).toItemStack(),
+                new ItemBuilder(Material.BOW).setName("&dHealer's &7bow").toItemStack(),
+                new ItemStack(Material.WOODEN_PICKAXE),
+                new ItemStack(Material.WOODEN_SHOVEL),
+                new ItemStack(Material.CRAFTING_TABLE),
+                new ItemStack(Material.ARROW, 10)
         };
     }
-
 }

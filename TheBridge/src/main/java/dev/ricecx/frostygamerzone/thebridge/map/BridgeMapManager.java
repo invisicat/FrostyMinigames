@@ -37,8 +37,8 @@ public class BridgeMapManager extends AbstractMapManager<BridgeMapMeta> {
     }
 
     @Override
-    public void saveMap(MapMeta mapMeta) {
-        LoggingUtils.info("Saving map data " + ((BridgeMapMetaImpl) mapMeta).toString());
+    public void saveMap(BridgeMapMeta mapMeta) {
+        LoggingUtils.info("Saving map data " + mapMeta.toString());
         DatabaseManager.getSQLUtils().executeUpdate("UPDATE mapmeta SET meta = ? WHERE name = ?", (ps) -> {
             ps.setString(1, gson.toJson(mapMeta));
             ps.setString(2, mapMeta.getName());

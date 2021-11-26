@@ -1,8 +1,7 @@
-package dev.ricecx.frostygamerzone.thebridge.lobby.boards;
+package dev.ricecx.frostygamerzone.thebridge.boards;
 
 import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.bukkitapi.scoreboard.FrostBoard;
-import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import dev.ricecx.frostygamerzone.thebridge.TheBridgeGame;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeamManager;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
@@ -41,7 +40,7 @@ public class BridgeGameBoard extends FrostBoard {
                 " ",
                 "&7Elapsed time: &6" + DurationFormatUtils.formatDuration(System.currentTimeMillis() - startTime, "mm:ss"),
                 "&7Map: " + "&6" + player.getGameObject().getTemplateMap(),
-                "&7Kit: " + "&6Traitor",
+                "&7Kit: " + "&6" + player.getKit().getName(),
                 "",
                 "&bplay.frostynetwork.net"
         };

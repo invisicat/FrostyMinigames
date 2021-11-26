@@ -11,6 +11,7 @@ import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -50,18 +51,19 @@ public class BridgeTeam extends Team<BridgeUser> implements MapMetaConsumer<Brid
     public void breakNexus(BridgeUser breaker) {
         decreaseNexus(1);
 
-        Block nexusBlock = nexusLocation.getBlock();
+        Block nexusBlock = breaker.getGameObject().getLocation(nexusLocation).getBlock();
 
         if(isDead()) {
             // This nexus was broken. Send the destroy message
-            MinigamesAPI.broadcastGame(breaker.getGame(), String.format("&c%s&7 has destroyed the %s&7's nexus!", breaker.getName(), "TEAM"));
+            MinigamesAPI.broadcastGame(breaker.getGame(), String.format("&c%s&7 has destroyed the %s&7's nexus!", breaker.getName(), getDisplayName()));
 
             breaker.getGameObject().executePlayer((p) -> p.playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1, 0));
 
             breaker.getGameObject().endGame();
         } else {
             // Break the nexus normally
-            MinigamesAPI.broadcastGame(breaker.getGame(), String.format("%s &7has damaged the %s&7 nexus!", breaker.getName(), "TEAM"));
+            MinigamesAPI.broadcastGame(breaker.getGame(), String.format("%s &7has damaged the %s&7 nexus!", breaker.getName(), getDisplayName()));
+            breaker.getGameObject().executePlayer((p) -> p.playSound(nexusBlock.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0.5F));
         }
     }
 
@@ -71,6 +73,7 @@ public class BridgeTeam extends Team<BridgeUser> implements MapMetaConsumer<Brid
         LoggingUtils.info("Applying config mapper to " + getTeamID());
         setNexusLocation(getTeamMappedMethod(this, "nexus", mapMeta, Location.class));
         setSpawnLocation(getTeamMappedMethod(this, "spawn", mapMeta, Location.class));
+
     }
 
     @Override

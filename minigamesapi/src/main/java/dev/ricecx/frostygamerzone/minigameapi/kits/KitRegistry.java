@@ -14,11 +14,19 @@ public abstract class KitRegistry<K, U extends KitUser<U, K>> {
 
     }
 
-    protected void register(Kit<K, U> kit) {
-        kits.put(kit.getKit(), kit);
+    public abstract void openKitGUI(U user);
+
+    protected void register(Kit<K, U> ...kitss) {
+        for (Kit<K, U> kit : kitss) {
+            kits.put(kit.getKit(), kit);
+        }
     }
 
     public Kit<K, U> getKit(K kitEnum) {
         return kits.get(kitEnum);
+    }
+
+    public Map<K, Kit<K, U>> getKits() {
+        return kits;
     }
 }

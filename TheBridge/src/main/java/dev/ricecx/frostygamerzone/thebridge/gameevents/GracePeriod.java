@@ -21,7 +21,7 @@ public class GracePeriod extends GameEvent {
 
         if((getDifferenceOf(second) % 60) == 0) {
             game.broadcast(String.format("&7The &6Grace period &7is ending in &e%s", DurationFormatter.LONG.format(getDifferenceOf(second))));
-        } else if(getDifferenceOf(second) <= 10) {
+        } else if(getDifferenceOf(second) <= 5 && getDifferenceOf(second) != 0) {
             game.broadcast(String.format("&7The &6Grace period &7is ending in &e%s", DurationFormatter.LONG.format(getDifferenceOf(second))));
             game.executePlayer((p) -> p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1));
         }

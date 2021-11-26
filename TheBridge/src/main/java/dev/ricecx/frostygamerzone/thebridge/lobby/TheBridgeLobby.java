@@ -10,8 +10,9 @@ import dev.ricecx.frostygamerzone.minigameapi.lobby.core.AbstractLobby;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
 import dev.ricecx.frostygamerzone.thebridge.TheBridgeGame;
-import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeGameBoard;
-import dev.ricecx.frostygamerzone.thebridge.lobby.boards.BridgeLobbyPreGameBoard;
+import dev.ricecx.frostygamerzone.thebridge.boards.BridgeGameBoard;
+import dev.ricecx.frostygamerzone.thebridge.boards.BridgeLobbyPreGameBoard;
+import dev.ricecx.frostygamerzone.thebridge.kits.BridgeKitRegistry;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import lombok.Getter;
@@ -74,7 +75,7 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
         BridgeTeam blue = game.getTeamManager().getRegisteredTeams().get(game.getTeamManager().getTeams().get("blue"));
 
         player.getInventory().setItem(0, new ItemBuilder(Material.PAPER).setName("&2&lVote for map").toItemStack());
-        player.getInventory().setItem(1, new ItemBuilder(Material.GOLDEN_SWORD).setName("&6&lChange Kit").toItemStack());
+        player.getInventory().setItem(1, new ItemBuilder(Material.GOLDEN_AXE).setName("&6&lChange Kit").toItemStack());
         player.getInventory().setItem(3, addTeamSelector(red.getTeamItem(), red));
         player.getInventory().setItem(4, new ItemBuilder(Material.MAP).setName("&a&lRandom Team").toItemStack());
         player.getInventory().setItem(5, addTeamSelector(blue.getTeamItem(), blue));
@@ -103,8 +104,14 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
             } else {
                 user.getPlayer().sendMessage("Teams are full.");
             }
-
+        } else if(itemStack.getType().equals(Material.GOLDEN_AXE)) {
+            onKitSelect(user);
         }
     }
 
+    private void onKitSelect(GameUser user) {
+        BridgeUser bridgeUser = Users.getUser(user, BridgeUser.class);
+        if(bridgeUser == null) return;
+        MinigamesAPI.getKitRegistry(BridgeKitRegistry.class).openKitGUI(bridgeUser);
+    }
 }

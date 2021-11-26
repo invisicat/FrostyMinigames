@@ -25,6 +25,9 @@ public class OffloadTask {
         Bukkit.getScheduler().runTask(MinigamesAPI.getMinigamesPlugin(), runnable);
     }
 
+    public static void offloadDelayedSync(Runnable runnable, int delay) {
+        Bukkit.getScheduler().runTaskLater(MinigamesAPI.getMinigamesPlugin(), runnable, delay);
+    }
     public static void timer(Consumer<CancelTask> consumer, int time, TimeUnit timeUnit) {
 
     }

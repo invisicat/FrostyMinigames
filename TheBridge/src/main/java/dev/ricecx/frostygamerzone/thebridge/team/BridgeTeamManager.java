@@ -6,9 +6,11 @@ import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamColor;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamManager;
+import dev.ricecx.frostygamerzone.minigameapi.utils.LocationUtils;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import lombok.Getter;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -42,6 +44,14 @@ public class BridgeTeamManager extends TeamManager<BridgeUser, BridgeTeam> {
 
         teams.put("red", addTeam(redTeam));
         teams.put("blue", addTeam(bleuTeam));
+    }
+
+    public BridgeTeam getTeamByNexus(Location location) {
+        for (BridgeTeam team : getRegisteredTeams().values()) {
+            if(LocationUtils.areSimilar(location, team.getNexusLocation())) return team;
+        }
+
+        return null;
     }
 
     public BridgeTeam getTeam(String name) {
