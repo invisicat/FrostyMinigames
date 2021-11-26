@@ -5,6 +5,7 @@ import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.common.database.DatabaseManager;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
+import dev.ricecx.frostygamerzone.minigameapi.map.TeamMapMeta;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUserImpl;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
@@ -55,14 +56,13 @@ public class BridgeUserImpl extends GameUserImpl implements BridgeUser {
 
     @Override
     public void startRespawning() {
-        BridgeMapMeta mapMeta = MinigamesAPI.getMapManager(BridgeMapManager.class).getMap(getGame());
         // 5.5 seconds
         double deathDuration = 5.5 * 1000;
         long whenToRespawn = (long) (System.currentTimeMillis() + deathDuration);
 
         OffloadTask.offloadDelayedSync(() -> {
             // teleport them to spectator
-            getPlayer().teleport(mapMeta.getSpectatorSpawn());
+            getPlayer().teleport(((BridgeMapMeta) this.getGameObject().getMapMeta()).getSpectatorSpawn());
             getPlayer().setGameMode(GameMode.SPECTATOR);
         }, 1);
 

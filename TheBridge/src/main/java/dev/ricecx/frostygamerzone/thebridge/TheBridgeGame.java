@@ -2,6 +2,7 @@ package dev.ricecx.frostygamerzone.thebridge;
 
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
+import dev.ricecx.frostygamerzone.minigameapi.citizens.FrostNPC;
 import dev.ricecx.frostygamerzone.minigameapi.game.AbstractGame;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapMeta;
@@ -12,11 +13,17 @@ import dev.ricecx.frostygamerzone.thebridge.lobby.BridgeMapVoter;
 import dev.ricecx.frostygamerzone.thebridge.boards.BridgeGameBoard;
 import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapMeta;
 import dev.ricecx.frostygamerzone.thebridge.modules.BridgeEventManager;
+import dev.ricecx.frostygamerzone.thebridge.shop.TestShop;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeamManager;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Location;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 
 @Getter
@@ -25,6 +32,9 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
 
 
     private boolean grace = false;
+    private List<UUID> shopNPCIds = new ArrayList<>();
+    private MapMeta mapMeta;
+    private TestShop testShop = new TestShop();
 
     public TheBridgeGame() {
         setTeamManager(new BridgeTeamManager(this));
@@ -50,12 +60,20 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
         for (BridgeTeam value : getTeamManager().getRegisteredTeams().values()) {
             value.applyConfigMapper(bridgeMapMeta);
         }
+        this.mapMeta = meta;
     }
 
     @Override
     public void onStartGame() {
         setStartTime(System.currentTimeMillis());
         getGameEventManager().start();
+
+        for (Location shop : ((BridgeMapMeta) getMapMeta()).getShops()) {
+            FrostNPC npc = FrostNPC.createNPC("MassiveLag", shop);
+            npc.setOnClick(testShop::onClick);
+            MinigamesAPI.getCitizens().addNPC(npc);
+            shopNPCIds.add(npc.uuid);
+        }
     }
 
     @Override
@@ -72,6 +90,11 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
 
         player.clearInventory();
         player.provideKit();
+
+        for (UUID shopNPC : shopNPCIds) {
+
+            MinigamesAPI.getCitizens().getNPC(shopNPC).getNPC().spawnNPC(player.getPlayer());
+        }
     }
 
     @Override

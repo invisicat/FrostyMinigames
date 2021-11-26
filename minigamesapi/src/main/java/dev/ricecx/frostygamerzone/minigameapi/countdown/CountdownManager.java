@@ -56,6 +56,7 @@ public class CountdownManager {
         if(runnable != null) {
             runnable.cancel();
             OffloadTask.offloadSync(() -> countdowns.get(uuid).onCancel());
+            bukkitRunnables.remove(uuid);
         }
     }
     private BukkitRunnable generateRunnable(UUID countdownUUID) {

@@ -1,10 +1,12 @@
 package dev.ricecx.frostygamerzone.thebridge.team;
 
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
+import dev.ricecx.frostygamerzone.minigameapi.Minigame;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapMetaConsumer;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamColor;
+import dev.ricecx.frostygamerzone.thebridge.TheBridgeGame;
 import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapManager;
 import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapMeta;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
@@ -49,6 +51,10 @@ public class BridgeTeam extends Team<BridgeUser> implements MapMetaConsumer<Brid
     }
 
     public void breakNexus(BridgeUser breaker) {
+        if(breaker.getGameObject(TheBridgeGame.class).isGrace()) {
+            breaker.getPlayer().sendMessage("&cYou cannot damage the nexus while in the &6grace period&c!");
+            return;
+        }
         decreaseNexus(1);
 
         Block nexusBlock = breaker.getGameObject().getLocation(nexusLocation).getBlock();

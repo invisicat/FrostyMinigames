@@ -10,6 +10,7 @@ import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.bukkitapi.modules.scoreboard.ScoreboardModule;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.adapters.LocationAdapter;
+import dev.ricecx.frostygamerzone.minigameapi.citizens.Citizens;
 import dev.ricecx.frostygamerzone.minigameapi.commands.GameManagerCommand;
 import dev.ricecx.frostygamerzone.minigameapi.commands.TestGUICommand;
 import dev.ricecx.frostygamerzone.minigameapi.countdown.CountdownManager;
@@ -84,6 +85,8 @@ public class MinigamesAPI {
     @Getter
     @Setter
     private static KitRegistry<?, ?> kitRegistry;
+    @Getter
+    private static Citizens citizens;
 
 
     public static void loadAPI() {
@@ -101,6 +104,7 @@ public class MinigamesAPI {
 
         GameState.setState(GameState.WAITING);
         scoreboardModule = new ScoreboardModule();
+        citizens = new Citizens();
 
         getMapManager().loadMapsIntoCache();
         OffloadTask.offloadSync(() -> getWorldManager().loadMap("final-lobby").thenApply((sw) -> {
@@ -110,7 +114,7 @@ public class MinigamesAPI {
         new ChatModule();
         new GUIModule();
 
-        getMinigamesPlugin().registerListeners(new MinigamesListener(), new GameManagerListener(), new TeamListener());
+        getMinigamesPlugin().registerListeners(new MinigamesListener(), new GameManagerListener(), new TeamListener(), citizens);
         getMinigamesPlugin().registerCommands(new GameManagerCommand(),
                 new TestGUICommand());
 

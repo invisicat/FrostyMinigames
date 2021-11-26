@@ -21,7 +21,11 @@ public class NexusHandler implements Listener {
         BridgeTeam targetTeam = ((BridgeTeamManager) user.getGameObject(TheBridgeGame.class).getTeamManager()).getTeamByNexus(evt.getBlock().getLocation());
         if(targetTeam == null) return;
 
-        targetTeam.breakNexus(user);
+        if(user.getTeam() != targetTeam)
+            targetTeam.breakNexus(user);
+        else
+            user.getPlayer().sendMessage("&cYou cannot destroy you own nexus!");
+
         evt.setCancelled(true);
     }
 }

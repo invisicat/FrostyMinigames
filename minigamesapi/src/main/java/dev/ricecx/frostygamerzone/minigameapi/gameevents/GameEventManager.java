@@ -50,6 +50,7 @@ public abstract class GameEventManager {
             evt.onFinish(getGame());
             eventQueue.remove();
             setSecondsPassed(0);
+            return;
         }
 
         secondsPassed++;
