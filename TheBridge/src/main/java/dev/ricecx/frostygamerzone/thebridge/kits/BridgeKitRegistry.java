@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -41,12 +42,22 @@ public class BridgeKitRegistry extends KitRegistry<TheBridgeKits, BridgeUser> {
     }
 
 
+    @SuppressWarnings("UnstableApiUsage")
     public void openKitGUI(BridgeUser user) {
         InventoryGui gui = new InventoryGui(CorePlugin.getInstance(), user.getPlayer(), "Kits", generateKitGUI().toArray(String[]::new));
 
         List<TheBridgeKits> kitList = new ArrayList<>(getKits().keySet());
         for (TheBridgeKits kit : getKits().keySet()) {
             char idx = charArray.charAt(kitList.indexOf(kit));
+
+            // https://stackoverflow.com/a/49772469 - the fastest way to combine 2 string[]
+            String[] title = new String[] { Utils.color("&7" + kit.getName()) };
+            String[] descriptionCut = Splitter.fixedLength(20).splitToList(kit.getDescription()).toArray(String[]::new);
+
+            String[] both = Arrays.copyOf(title, title.length + descriptionCut.length);
+            System.arraycopy(descriptionCut, 0, both, title.length, descriptionCut.length);
+
+            // Add GUI element
             gui.addElement(idx, Material.ANVIL, (click) -> {
                 if(user.getKit().equals(kit)) {
                     user.getPlayer().sendMessage(Utils.color("&7You've already selected kit&c " + kit.getName()));
@@ -57,7 +68,7 @@ public class BridgeKitRegistry extends KitRegistry<TheBridgeKits, BridgeUser> {
                 user.getPlayer().sendMessage(Utils.color("&7You have selected &c " + kit.getName()));
                 user.getPlayer().playSound(user.getPlayer().getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1, 1);
                 return true;
-            }, Utils.color("&7" + kit.getName()), kit.getDescription());
+            }, both);
         }
 
         gui.show(user.getPlayer());

@@ -24,6 +24,7 @@ public abstract class AbstractFightManager implements Listener {
         if(user == null || !user.isSpectating()) return;
 
         user.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, true));
+
         OffloadTask.offloadSync(() -> {
             user.getPlayer().setAllowFlight(true);
             user.getPlayer().setFlying(true);

@@ -17,6 +17,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class GameStartCountdown extends GameCountdown<BridgeTeam, BridgeUser> {
+
+    private final int timeToStart = 25;
+
     public GameStartCountdown(Game<BridgeTeam, BridgeUser> game) {
         super(25, 2, game);
     }
@@ -52,7 +55,7 @@ public class GameStartCountdown extends GameCountdown<BridgeTeam, BridgeUser> {
 
     @Override
     public void onEnoughPlayers() {
-        MinigamesAPI.broadcastGame(getGame(), "&7Game is starting in 60 seconds!");
+        MinigamesAPI.broadcastGame(getGame(), String.format("&7Game is starting in %d seconds!", timeToStart));
         getGame().executePlayer((p) -> p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1));
 
     }

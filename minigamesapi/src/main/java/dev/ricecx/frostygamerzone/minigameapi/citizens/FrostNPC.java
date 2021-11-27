@@ -1,6 +1,6 @@
 package dev.ricecx.frostygamerzone.minigameapi.citizens;
 
-import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
+import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
@@ -16,15 +16,12 @@ public class FrostNPC {
     @Getter
     @Setter
     Consumer<Player> onClick;
+    @Setter @Getter private NPC.SkinTextures skinTextures;
 
     FrostNPC(NPC npc, UUID uuid) {
         this.npc = npc;
         this.uuid = uuid;
-        NPC.SkinTextures.getByUsername(MinigamesAPI.getMinigamesPlugin(), "MassiveLag", (s, sk) -> {
-            if(s) {
-                npc.setSkin(sk);
-            }
-        });
+        OffloadTask.offloadAsync(() -> NPC.SkinTextures.getByUsername("MassiveLag").thenAccept(this::setSkinTextures));
     }
 
 
@@ -33,9 +30,6 @@ public class FrostNPC {
         UUID uuid = UUID.randomUUID();
         NPC npc = new NPC(uuid, location, name);
         return new FrostNPC(npc, uuid);
-    }
-
-    public void spawn(Location location) {
     }
 
     public NPC getNPC() {

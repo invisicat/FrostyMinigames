@@ -3,10 +3,12 @@ package dev.ricecx.frostygamerzone.thebridge;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.citizens.FrostNPC;
+import dev.ricecx.frostygamerzone.minigameapi.citizens.NPC;
 import dev.ricecx.frostygamerzone.minigameapi.game.AbstractGame;
 import dev.ricecx.frostygamerzone.minigameapi.game.Game;
 import dev.ricecx.frostygamerzone.minigameapi.map.MapMeta;
 
+import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
 import dev.ricecx.frostygamerzone.thebridge.countdowns.GameStartCountdown;
 import dev.ricecx.frostygamerzone.thebridge.gameevents.GracePeriod;
 import dev.ricecx.frostygamerzone.thebridge.lobby.BridgeMapVoter;
@@ -31,7 +33,7 @@ import java.util.UUID;
 public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implements Game<BridgeTeam, BridgeUser> {
 
 
-    private boolean grace = false;
+    private boolean grace = true;
     private List<UUID> shopNPCIds = new ArrayList<>();
     private MapMeta mapMeta;
     private TestShop testShop = new TestShop();
@@ -78,6 +80,7 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
 
     @Override
     public void onPlayerStartGame(BridgeUser player) {
+
         if(player.getTeam() == null) {
             BridgeTeam randomTeam = getTeamManager().getAvailableTeam();
             randomTeam.addPlayer(player);
@@ -92,8 +95,11 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
         player.provideKit();
 
         for (UUID shopNPC : shopNPCIds) {
-
-            MinigamesAPI.getCitizens().getNPC(shopNPC).getNPC().spawnNPC(player.getPlayer());
+            NPC npc = MinigamesAPI.getCitizens().getNPC(shopNPC).getNPC();
+            npc.spawnNPC(player.getPlayer());
+            OffloadTask.offloadAsync(() -> npc.setASyncSkinByUsername(MinigamesAPI.getMinigamesPlugin(), player.getPlayer(), "MassiveLag"));
+            npc.setNameTagVisibility(player.getPlayer(), false);
+            npc.lookAtPlayer(player.getPlayer(), player.getPlayer());
         }
     }
 
