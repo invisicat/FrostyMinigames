@@ -21,6 +21,8 @@ public class BridgeMapManager extends AbstractMapManager<BridgeMapMeta> {
         Map<String, BridgeMapMeta> maps = new HashMap<>();
         DatabaseManager.getSQLUtils().executeQuery("SELECT * FROM mapmeta WHERE game = ?", (ps) -> ps.setString(1, "thebridge"),(rs) -> {
             while(rs.next()) {
+                if(rs.getString("meta") == null) continue;
+
                 BridgeMapMetaImpl map = gson.fromJson(rs.getString("meta"), BridgeMapMetaImpl.class);
 
                 map.setName(rs.getString("name"));

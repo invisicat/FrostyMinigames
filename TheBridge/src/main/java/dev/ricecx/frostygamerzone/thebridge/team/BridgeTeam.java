@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 
@@ -66,6 +67,7 @@ public class BridgeTeam extends Team<BridgeUser> implements MapMetaConsumer<Brid
             breaker.getGameObject().executePlayer((p) -> p.playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1, 0));
 
             breaker.getGameObject().endGame();
+            nexusBlock.setType(Material.BEDROCK);
         } else {
             // Break the nexus normally
             MinigamesAPI.broadcastGame(breaker.getGame(), String.format("%s &7has damaged the %s&7 nexus!", breaker.getName(), getDisplayName()));

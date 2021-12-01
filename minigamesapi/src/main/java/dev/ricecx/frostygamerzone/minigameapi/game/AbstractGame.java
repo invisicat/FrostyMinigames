@@ -70,7 +70,7 @@ public abstract class AbstractGame<U extends GameUser, T extends Team<U>> implem
     
     public void setInternalScoreboardTeams() {
         for (T team : getTeamManager().getRegisteredTeams().values()) {
-            org.bukkit.scoreboard.Team bukkitTeam = scoreboard.registerNewTeam(team.getDisplayName() + "-" + team.getTeamID());
+            org.bukkit.scoreboard.Team bukkitTeam = scoreboard.registerNewTeam(team.getDisplayName());
             bukkitTeam.setColor(team.getTeamColor().getChatColor());
             bukkitTeam.setDisplayName(team.getDisplayName());
             applyTeamSettings(bukkitTeam);

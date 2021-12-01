@@ -19,7 +19,7 @@ public class BridgeGameBoard extends FrostCrossCompatBoard {
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public BridgeGameBoard(BridgeUser player) {
-        super(player.getPlayer(), "&e&lT&6&lh&e&le &6&lB&e&lr&6&li&e&ld&6&lg&e&le");
+        super(player.getPlayer(), "&e&lT&6h&ee &6B&er&6i&ed&6g&ee");
 
         this.player = player;
         this.startTime = player.getGameObject().getStartTime();

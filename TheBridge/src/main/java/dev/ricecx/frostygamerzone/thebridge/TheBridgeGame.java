@@ -61,7 +61,7 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
     public void applyTeamSettings(Team team) {
         team.setAllowFriendlyFire(false);
         team.setCanSeeFriendlyInvisibles(true);
-        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OWN_TEAM);
+        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS);
     }
 
     @Override
@@ -78,6 +78,7 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
     public void onStartGame() {
         setStartTime(System.currentTimeMillis());
         getGameEventManager().start();
+        setInternalScoreboardTeams();
 
         for (Location shop : ((BridgeMapMeta) getMapMeta()).getShops()) {
             FrostNPC npc = FrostNPC.createNPC("MassiveLag", shop);
@@ -97,6 +98,8 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
             player.setTeam(randomTeam);
         }
 
+        getScoreboard().getTeam(player.getTeam().getDisplayName()).addPlayer(player.getPlayer());
+
         teleport(player.getTeam().getSpawn(), player);
 
         MinigamesAPI.getScoreboardModule().provideScoreboard(player.getPlayer(), new BridgeGameBoard(player));
@@ -112,6 +115,7 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
 //            npc.setSkin(frostNPC.getSkinTextures());
             npc.setNameTagVisibility(player.getPlayer(), false);
             npc.lookAtPlayer(player.getPlayer(), player.getPlayer());
+            npc.removeFromTabList(player.getPlayer());
         }
     }
 

@@ -20,7 +20,7 @@ public class BridgeLobbyPreGameBoard extends FrostBoard {
 
     // TODO: remove game as you can get the game from the game user itself.
     public BridgeLobbyPreGameBoard(GameUser player) {
-        super(player.getPlayer(), "&e&lT&6&lh&e&le &6&lB&e&lr&6&li&e&ld&6&lg&e&le");
+        super(player.getPlayer(), "&e&lT&6h&ee &6B&er&6i&ed&6g&ee");
 
         game = player.getGameObject();
         user = Users.getUser(player, BridgeUser.class);

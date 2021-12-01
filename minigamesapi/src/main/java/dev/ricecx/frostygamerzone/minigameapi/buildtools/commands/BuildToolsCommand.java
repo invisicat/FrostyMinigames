@@ -33,7 +33,7 @@ public class BuildToolsCommand implements Command {
         map = createObject(clazz);
         for (Field field : clazz.getDeclaredFields()) {
             LoggingUtils.info("Build tools found registerable field: " + field.getName());
-            if(Collection.class.isAssignableFrom(field.getType())) {
+            if (Collection.class.isAssignableFrom(field.getType())) {
                 // this is a collection
                 multiFields.put(field.getName(), field);
             } else {
@@ -45,37 +45,37 @@ public class BuildToolsCommand implements Command {
     @Override
     public void run(CommandSender commandSender, String[] args) {
 
-        if(args[0].equalsIgnoreCase("save")) {
-            if(args.length >= 2) {
+        if (args[0].equalsIgnoreCase("save")) {
+            if (args.length >= 2) {
                 saveMap((Player) commandSender, args[1]);
-          //      MinigamesAPI.getMapManager().saveMap(newMap);
+                //      MinigamesAPI.getMapManager().saveMap(newMap);
             } else {
                 commandSender.sendMessage("Specify a map name.");
             }
             return;
         }
-        if(args[0].equalsIgnoreCase("display")) {
+        if (args[0].equalsIgnoreCase("display")) {
             for (Map.Entry<String, String> str : prettyPrintFields().entrySet()) {
                 commandSender.sendMessage(str.getKey() + " - " + str.getValue());
             }
-        } else if(args[0].equalsIgnoreCase("set") && singleFields.containsKey(args[1])) {
+        } else if (args[0].equalsIgnoreCase("set") && singleFields.containsKey(args[1])) {
             Field field = singleFields.get(args[1]);
-            if(field.getType().isAssignableFrom(Location.class)) {
+            if (field.getType().isAssignableFrom(Location.class)) {
                 commandSender.sendMessage("You have set a location for " + args[1]);
-                if(field.getAnnotation(LookAt.class) != null || field.getDeclaredAnnotation(LookAt.class) != null) {
+                if (field.getAnnotation(LookAt.class) != null || field.getDeclaredAnnotation(LookAt.class) != null) {
                     Location loc = ((Player) commandSender).getTargetBlock(null, 5).getLocation();
                     friendlySet(field, loc);
                     commandSender.sendMessage(dev.ricecx.frostygamerzone.minigameapi.utils.Styles.location(loc));
                 } else {
                     friendlySet(field, ((Player) commandSender).getLocation());
-                    commandSender.sendMessage(dev.ricecx.frostygamerzone.minigameapi.utils.Styles.location(((Player)commandSender).getLocation()));
+                    commandSender.sendMessage(dev.ricecx.frostygamerzone.minigameapi.utils.Styles.location(((Player) commandSender).getLocation()));
                 }
             }
-        } else if(args[0].equalsIgnoreCase("add") && multiFields.containsKey(args[1])) {
+        } else if (args[0].equalsIgnoreCase("add") && multiFields.containsKey(args[1])) {
             Field field = multiFields.get(args[1]);
 
             List<Location> locs = ((List<Location>) friendlyGet(field));
-            if(locs == null) locs = new ArrayList<>();
+            if (locs == null) locs = new ArrayList<>();
             locs.add(((Player) commandSender).getLocation());
 
             friendlySet(field, locs);
@@ -87,12 +87,13 @@ public class BuildToolsCommand implements Command {
         MapMeta meta = clazz.cast(MinigamesAPI.getMapManager().getMapMeta(mapName));
 
         var a = combineMetas(meta, map);
-        map.setVersion(meta.getVersion() + 1);
+        int ver = meta != null ? meta.getVersion() : 1;
+        map.setVersion(ver);
         map.setName(mapName);
         map.setWorldTemplateName(player.getWorld().getName());
         map.setLastModified(System.currentTimeMillis());
 
-        a.setVersion(meta.getVersion() + 1);
+        a.setVersion(ver);
         a.setName(mapName);
         a.setWorldTemplateName(player.getWorld().getName());
         a.setLastModified(System.currentTimeMillis());
@@ -110,18 +111,20 @@ public class BuildToolsCommand implements Command {
             combinedFields.put(combinedField.getName(), combinedField);
         }
 
-        for (Field field : oldMeta.getClass().getDeclaredFields()) {
-            try {
-                combinedFields.get(field.getName()).setAccessible(true);
-                field.setAccessible(true);
-                combinedFields.get(field.getName()).set(combinedMeta, field.get(oldMeta));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+        if (oldMeta != null) {
+            for (Field field : oldMeta.getClass().getDeclaredFields()) {
+                try {
+                    combinedFields.get(field.getName()).setAccessible(true);
+                    field.setAccessible(true);
+                    combinedFields.get(field.getName()).set(combinedMeta, field.get(oldMeta));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
         for (Field newMetaFields : newMeta.getClass().getDeclaredFields()) {
-            if(friendlyGet(newMetaFields) == null) continue;
+            if (friendlyGet(newMetaFields) == null) continue;
             LoggingUtils.info("[Meta Combiner] Found new field: " + newMetaFields.getName());
 
             try {
@@ -142,7 +145,7 @@ public class BuildToolsCommand implements Command {
 
         for (Field declaredField : map.getClass().getDeclaredFields()) {
             Object wtf = declaredField.getType().cast(friendlyGet(declaredField));
-            if(wtf != null) prettyFields.put(declaredField.getName(), wtf.toString());
+            if (wtf != null) prettyFields.put(declaredField.getName(), wtf.toString());
         }
 
         return prettyFields;
@@ -159,6 +162,7 @@ public class BuildToolsCommand implements Command {
 
         return obj;
     }
+
     private void friendlySet(Field field, Object set) {
         try {
             field.setAccessible(true);
@@ -171,12 +175,12 @@ public class BuildToolsCommand implements Command {
     @Override
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         List<String> actions = new ArrayList<>();
-        if(args.length <= 1) {
+        if (args.length <= 1) {
             actions.add("set");
             actions.add("display");
             actions.add("save");
             actions.add("add");
-        } else if(args.length == 2) {
+        } else if (args.length == 2) {
             actions.addAll(singleFields.keySet());
             for (String multiField : multiFields.keySet()) {
                 actions.add("list-" + multiField);
