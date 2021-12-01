@@ -25,6 +25,8 @@ public class OreProtection implements Listener {
     private static final Set<Material> axe = Tag.MINEABLE_AXE.getValues();
     private static final Set<Material> shovel = Tag.MINEABLE_SHOVEL.getValues();
 
+    private static final Set<Material> airMaterials = new HashSet<>();
+
     static {
         ores.addAll(Tag.COAL_ORES.getValues());
         ores.addAll(Tag.GOLD_ORES.getValues());
@@ -32,6 +34,9 @@ public class OreProtection implements Listener {
         ores.addAll(Tag.EMERALD_ORES.getValues());
         ores.addAll(Tag.DIAMOND_ORES.getValues());
         ores.addAll(Tag.LAPIS_ORES.getValues());
+
+        airMaterials.add(Material.MELON);
+        airMaterials.addAll(Tag.LOGS.getValues());
     }
 
     @EventHandler
@@ -44,16 +49,20 @@ public class OreProtection implements Listener {
         HandToolType toolType = getHandToolType(player.getInventory().getItemInMainHand().getType());
 
         if(toolType.contains(blockMaterial)) {
-            player.getInventory().addItem(brokenBlock.getDrops().toArray(ItemStack[]::new));
             // add statistics here.
 
             if(toolType.canRegen(blockMaterial)) {
                 regenerateBlock(brokenBlock, 5, Material.BEDROCK);
+                player.getInventory().addItem(brokenBlock.getDrops().toArray(ItemStack[]::new));
+                evt.setDropItems(false);
             }
+
+            evt.setExpToDrop(0);
+        } else {
+            player.sendMessage("(!) Try breaking this block with the right tool!");
+            evt.setCancelled(true);
         }
 
-        evt.setDropItems(false);
-        evt.setExpToDrop(0);
     }
 
 
@@ -73,7 +82,7 @@ public class OreProtection implements Listener {
      */
     public void regenerateBlock(Block block, int time, Material material) {
         Material previousMat = block.getType();
-        block.setType(material);
+        OffloadTask.offloadDelayedSync(() -> block.setType(material), 1);
 
         OffloadTask.offloadDelayedSync(() -> block.setType(previousMat), time * 20);
     }
@@ -98,13 +107,20 @@ public class OreProtection implements Listener {
             return this.acceptedMaterials.contains(material);
         }
 
+
         public boolean canRegen(Material material) {
-            if(this == PICKAXE || this == AXE) return false;
+            return regen(material) != null;
+        }
+
+        public RegenKey regen(Material material) {
+            if(this == PICKAXE || this == AXE) return null;
 
             // TODO: add wood regeneration
-            return ores.contains(material);
+            if(airMaterials.contains(material)) return new RegenKey(material, Material.AIR, 10);
+
+            return null;
         }
     }
 
-    public record RegenKey(Material material, int regenTime) {}
+    public record RegenKey(Material baseMaterial, Material replacementMaterial, int regenTime) { }
 }

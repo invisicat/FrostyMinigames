@@ -21,7 +21,8 @@ public class FrostNPC {
     FrostNPC(NPC npc, UUID uuid) {
         this.npc = npc;
         this.uuid = uuid;
-        OffloadTask.offloadAsync(() -> NPC.SkinTextures.getByUsername("MassiveLag").thenAccept(this::setSkinTextures));
+
+        // OffloadTask.offloadAsync(() -> NPC.SkinTextures.getByUsername("MassiveLag").thenAccept(this::setSkinTextures));
     }
 
 

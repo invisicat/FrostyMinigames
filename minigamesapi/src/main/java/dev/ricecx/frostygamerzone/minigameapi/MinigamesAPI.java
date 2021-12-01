@@ -4,7 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.grinderwolf.swm.api.SlimePlugin;
-import com.grinderwolf.swm.api.world.SlimeWorld;
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.ViaAPI;
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.bukkitapi.modules.scoreboard.ScoreboardModule;
@@ -30,6 +31,7 @@ import dev.ricecx.frostygamerzone.minigameapi.slime.WorldManager;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamListener;
 import dev.ricecx.frostygamerzone.minigameapi.users.UserManager;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
+import dev.ricecx.frostygamerzone.minigameapi.utils.Reflection;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,8 +39,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-import java.util.concurrent.CompletableFuture;
 
 
 @Data
@@ -87,8 +87,10 @@ public class MinigamesAPI {
     private static KitRegistry<?, ?> kitRegistry;
     @Getter
     private static Citizens citizens;
+    @Getter
+    private static ViaAPI<Player> viaVersionAPI;
 
-
+    @SuppressWarnings("unchecked") /* Unchecked casts suck :P */
     public static void loadAPI() {
         long startLoad = System.currentTimeMillis();
 
@@ -105,6 +107,8 @@ public class MinigamesAPI {
         GameState.setState(GameState.WAITING);
         scoreboardModule = new ScoreboardModule();
         citizens = new Citizens();
+
+        viaVersionAPI = Via.getAPI();
 
         getMapManager().loadMapsIntoCache();
         OffloadTask.offloadSync(() -> getWorldManager().loadMap("final-lobby").thenApply((sw) -> {

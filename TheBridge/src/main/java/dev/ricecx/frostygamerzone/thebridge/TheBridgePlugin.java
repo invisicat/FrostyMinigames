@@ -10,6 +10,7 @@ import dev.ricecx.frostygamerzone.minigameapi.buildtools.commands.BuildToolsComm
 import dev.ricecx.frostygamerzone.minigameapi.kits.KitRegistry;
 import dev.ricecx.frostygamerzone.thebridge.buildtools.SrvCommand;
 import dev.ricecx.frostygamerzone.thebridge.commands.KitCommand;
+import dev.ricecx.frostygamerzone.thebridge.commands.SoulBoundCommand;
 import dev.ricecx.frostygamerzone.thebridge.handler.*;
 import dev.ricecx.frostygamerzone.thebridge.kits.BridgeKitRegistry;
 import dev.ricecx.frostygamerzone.thebridge.lobby.TheBridgeLobby;
@@ -42,12 +43,12 @@ public final class TheBridgePlugin extends MinigamesPlugin implements UserRegist
                 new FightHandler(),
                 new NexusHandler(),
                 new AntiCraft(),
-                new OreProtection(),
+       //         new OreProtection(),
                 new PoisonWaters(),
                 new SoulBound()
         );
 
-        CorePlugin.getInstance().registerCommands(new SrvCommand(), new KitCommand());
+        CorePlugin.getInstance().registerCommands(new SrvCommand(), new KitCommand(), new SoulBoundCommand());
         CorePlugin.getInstance().registerCommands(new BuildToolsCommand(BridgeMapMetaImpl.class));
         MinigamesAPI.loadAPI();
     }

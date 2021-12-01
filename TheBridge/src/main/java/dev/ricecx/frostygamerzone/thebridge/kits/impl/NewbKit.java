@@ -18,8 +18,8 @@ public class NewbKit extends TheBridgeKit {
     @Override
     public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
         return new ItemStack[] {
-                SoulBound.SoulboundTypes.LENIENT.wrap(new ItemBuilder(Material.STONE_SWORD).addEnchant(Enchantment.DAMAGE_ALL, 1).toItemStack()),
-                SoulBound.SoulboundTypes.CANNOT_DROP.wrap(new ItemBuilder(Material.WOODEN_PICKAXE).toItemStack()),
+                SoulBound.SoulboundTypes.LENIENT.wrap(new ItemBuilder(Material.STONE_SWORD).addEnchant(Enchantment.DAMAGE_ALL, 1).lore("&5&oNIGGERS").toItemStack()),
+                SoulBound.SoulboundTypes.CANNOT_DROP.wrap(new ItemStack(Material.WOODEN_PICKAXE)),
                 new ItemBuilder(Material.WOODEN_AXE).toItemStack(),
                 new ItemBuilder(Material.WOODEN_SHOVEL).toItemStack(),
                 new ItemBuilder(Material.CRAFTING_TABLE).toItemStack(),

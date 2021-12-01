@@ -1,6 +1,7 @@
 package dev.ricecx.frostygamerzone.minigameapi.game;
 
 
+import com.google.common.base.Preconditions;
 import dev.ricecx.frostygamerzone.bukkitapi.LazyLocation;
 import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
@@ -12,9 +13,11 @@ import dev.ricecx.frostygamerzone.minigameapi.mapvoting.MapVoter;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamManager;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -51,6 +54,9 @@ public interface Game<T extends Team<U>, U extends GameUser> extends Minigame {
     int getMaxPlayers();
     void setMaxPlayers(int maxPlayers);
 
+    Scoreboard getScoreboard();
+    void setScoreboard(Scoreboard scoreboard);
+
     List<U> getPlayers();
     int getAllPlayersInTeams();
 
@@ -59,6 +65,10 @@ public interface Game<T extends Team<U>, U extends GameUser> extends Minigame {
 
     GameEventManager getGameEventManager();
     void setGameEventManager(GameEventManager eventManager);
+
+    void setInternalScoreboardTeams();
+
+    void applyTeamSettings(org.bukkit.scoreboard.Team team);
 
 
     /**
@@ -122,5 +132,10 @@ public interface Game<T extends Team<U>, U extends GameUser> extends Minigame {
         return MinigamesAPI.getGameManager().getAllPlayersInGame(getIdentifier());
     }
 
+    default Scoreboard requestBukkitScoreboard() {
+        Preconditions.checkNotNull(Bukkit.getScoreboardManager(), "Scoreboard is not available.");
+
+        return Bukkit.getScoreboardManager().getNewScoreboard();
+    }
 
 }

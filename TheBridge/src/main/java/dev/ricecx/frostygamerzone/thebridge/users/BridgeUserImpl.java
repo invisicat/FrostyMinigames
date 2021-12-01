@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Timestamp;
@@ -62,7 +63,8 @@ public class BridgeUserImpl extends GameUserImpl implements BridgeUser {
 
         OffloadTask.offloadDelayedSync(() -> {
             // teleport them to spectator
-            getPlayer().teleport(((BridgeMapMeta) this.getGameObject().getMapMeta()).getSpectatorSpawn());
+            Location spectatorLocation = this.getGameObject().getLocation(((BridgeMapMeta) this.getGameObject().getMapMeta()).getSpectatorSpawn());
+            getPlayer().teleport(spectatorLocation);
             getPlayer().setGameMode(GameMode.SPECTATOR);
         }, 1);
 

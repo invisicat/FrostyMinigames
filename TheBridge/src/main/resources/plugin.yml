@@ -4,3 +4,7 @@ main: dev.ricecx.frostygamerzone.thebridge.TheBridgePlugin
 api-version: 1.17
 depend:
   - SlimeWorldManager
+softdepend:
+  - ViaVersion
+  - ViaBackwards
+  - ViaRewind

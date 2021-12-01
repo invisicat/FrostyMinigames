@@ -24,7 +24,7 @@ public class BuildToolsCommand implements Command {
 
     private final Map<String, Field> singleFields = new HashMap<>();
     private final Map<String, Field> multiFields = new HashMap<>();
-    private MapMeta map;
+    private final MapMeta map;
     private final Class<? extends MapMeta> clazz;
 
     public BuildToolsCommand(Class<? extends MapMeta> clazz) {
@@ -32,7 +32,7 @@ public class BuildToolsCommand implements Command {
         this.clazz = clazz;
         map = createObject(clazz);
         for (Field field : clazz.getDeclaredFields()) {
-            System.out.println("FIELD: " + field.getName());
+            LoggingUtils.info("Build tools found registerable field: " + field.getName());
             if(Collection.class.isAssignableFrom(field.getType())) {
                 // this is a collection
                 multiFields.put(field.getName(), field);

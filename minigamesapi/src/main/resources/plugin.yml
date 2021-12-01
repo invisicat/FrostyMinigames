@@ -1,4 +1,0 @@
-name: Minigameapi
-version: '${project.version}'
-main: dev.ricecx.frostygamerzone.minigameapi.Minigameapi
-api-version: 1.17

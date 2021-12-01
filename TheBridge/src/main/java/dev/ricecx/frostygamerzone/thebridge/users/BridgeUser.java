@@ -6,7 +6,6 @@ import dev.ricecx.frostygamerzone.minigameapi.kits.KitUser;
 import dev.ricecx.frostygamerzone.minigameapi.team.Team;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import dev.ricecx.frostygamerzone.thebridge.kits.BridgeKitRegistry;
-import dev.ricecx.frostygamerzone.thebridge.kits.TheBridgeKit;
 
 public interface BridgeUser extends GameUser, KitUser<BridgeUser, TheBridgeKits> {
     Team<BridgeUser> getTeam();

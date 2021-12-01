@@ -52,7 +52,7 @@ public class BridgeKitRegistry extends KitRegistry<TheBridgeKits, BridgeUser> {
 
             // https://stackoverflow.com/a/49772469 - the fastest way to combine 2 string[]
             String[] title = new String[] { Utils.color("&7" + kit.getName()) };
-            String[] descriptionCut = Splitter.fixedLength(20).splitToList(kit.getDescription()).toArray(String[]::new);
+            String[] descriptionCut = Splitter.fixedLength(28).splitToList(kit.getDescription()).toArray(String[]::new);
 
             String[] both = Arrays.copyOf(title, title.length + descriptionCut.length);
             System.arraycopy(descriptionCut, 0, both, title.length, descriptionCut.length);

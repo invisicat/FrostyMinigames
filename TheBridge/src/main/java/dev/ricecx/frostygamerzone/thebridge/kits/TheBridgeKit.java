@@ -24,7 +24,7 @@ public abstract class TheBridgeKit implements Kit<TheBridgeKits, BridgeUser> {
         ItemStack[] items = setItems(player);
 
         for (int i = 0; i < items.length; i++) {
-            player.getPlayer().getInventory().setItem(i, items[i]);
+            player.getPlayer().getInventory().setItem(i, items[i].clone());
         }
     }
 }

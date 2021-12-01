@@ -21,7 +21,9 @@ import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeamManager;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,7 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
         setMapVoter(new BridgeMapVoter(this));
         setGameEventManager(new BridgeEventManager(this));
         setMaxPlayers(32);
-        //
+        setScoreboard(requestBukkitScoreboard());
         getGameEventManager().registerEvent(
                 new GracePeriod()
         );
@@ -53,6 +55,13 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
     @Override
     public String getPrefix() {
         return "tb-";
+    }
+
+    @Override
+    public void applyTeamSettings(Team team) {
+        team.setAllowFriendlyFire(false);
+        team.setCanSeeFriendlyInvisibles(true);
+        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OWN_TEAM);
     }
 
     @Override
@@ -76,6 +85,7 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
             MinigamesAPI.getCitizens().addNPC(npc);
             shopNPCIds.add(npc.uuid);
         }
+
     }
 
     @Override
@@ -92,12 +102,14 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
         MinigamesAPI.getScoreboardModule().provideScoreboard(player.getPlayer(), new BridgeGameBoard(player));
 
         player.clearInventory();
+        player.getPlayer().setScoreboard(getScoreboard());
         player.provideKit();
 
         for (UUID shopNPC : shopNPCIds) {
-            NPC npc = MinigamesAPI.getCitizens().getNPC(shopNPC).getNPC();
+            FrostNPC frostNPC = MinigamesAPI.getCitizens().getNPC(shopNPC);
+            NPC npc = frostNPC.getNPC();
             npc.spawnNPC(player.getPlayer());
-            OffloadTask.offloadAsync(() -> npc.setASyncSkinByUsername(MinigamesAPI.getMinigamesPlugin(), player.getPlayer(), "MassiveLag"));
+//            npc.setSkin(frostNPC.getSkinTextures());
             npc.setNameTagVisibility(player.getPlayer(), false);
             npc.lookAtPlayer(player.getPlayer(), player.getPlayer());
         }

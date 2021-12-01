@@ -3,6 +3,9 @@ package dev.ricecx.frostygamerzone.thebridge.handler;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import dev.ricecx.frostygamerzone.bukkitapi.ItemBuilder;
+import dev.ricecx.frostygamerzone.bukkitapi.Utils;
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import lombok.Getter;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -70,32 +73,33 @@ public class SoulBound implements Listener {
             return from(type);
         }
 
-        public void setNBT(NBTItem item, boolean lore) {
-            item.setString(SOULBOUND_KEY, getNbtValue());
+        public ItemStack setNBT(ItemStack item, NBTItem nbtItem, boolean lore) {
+            nbtItem.setString(SOULBOUND_KEY, getNbtValue());
+            ItemStack stack = item;
             if(lore)
-                setLore(item.getItem());
+                stack = setLore(item);
+
+            nbtItem.applyNBT(item);
+
+            return stack;
         }
 
-        private static void setLore(ItemStack item) {
-            ItemMeta meta = item.getItemMeta();
-            if(meta == null) return;
-            List<String> existingLore = meta.getLore() != null ? meta.getLore() : new ArrayList<>();
-            existingLore.add(" ");
-            existingLore.add("&5&oSoulbound");
-            meta.setLore(existingLore);
+        private static ItemStack setLore(ItemStack item) {
+            ItemStack stack = new ItemBuilder(item).lore("Soulbound").toItemStack();
 
-            item.setItemMeta(meta);
+            LoggingUtils.info("Providing soul bound lore for " + item.getType());
+
+            return stack;
         }
 
-        public void setNBT(NBTItem item) {
-            setNBT(item, true);
+        public void setNBT(ItemStack item, NBTItem nbtItem) {
+            setNBT(item, nbtItem, true);
         }
 
         public ItemStack wrap(ItemStack item) {
             NBTItem nbt = new NBTItem(item);
 
-            setNBT(nbt);
-            return item;
+            return setNBT(item, nbt, true);
         }
     }
 

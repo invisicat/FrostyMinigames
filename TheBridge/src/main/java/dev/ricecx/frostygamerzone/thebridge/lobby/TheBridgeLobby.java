@@ -29,14 +29,16 @@ import java.util.*;
 
 public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTeam>, Listener {
 
-    @Getter Set<Material> cachedItemMaterials = new HashSet<>();
-    @Getter Map<ItemStack, BridgeTeam> teamSelector = new HashMap<>();
+    @Getter
+    Set<Material> cachedItemMaterials = new HashSet<>();
+    @Getter
+    Map<ItemStack, BridgeTeam> teamSelector = new HashMap<>();
 
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerItemInteract(PlayerInteractEvent evt) {
         if (evt.getAction() == Action.RIGHT_CLICK_AIR || evt.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if(evt.getItem() == null) return;
+            if (evt.getItem() == null) return;
             onItemInteract(Users.getUser(evt.getPlayer(), GameUser.class), evt.getItem());
             onItemITT(Users.getUser(evt.getPlayer(), GameUser.class), evt.getItem());
         }
@@ -46,9 +48,9 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
     public void giveItems(Player player) {
         Game<BridgeTeam, BridgeUser> game = MinigamesAPI.getGameManager().getPlayerGame(player);
 
-        if(game.getGameState() == GameState.WAITING) {
+        if (game.getGameState() == GameState.WAITING) {
             giveLobbyVotingItems(player, game);
-        } else if(game.getGameState() == GameState.IN_GAME) {
+        } else if (game.getGameState() == GameState.IN_GAME) {
             // do something else
         }
     }
@@ -57,7 +59,7 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
     public void onJoin(GameUser user) {
         Game<BridgeTeam, BridgeUser> game = MinigamesAPI.getGameManager().getPlayerGame(user);
 
-        if(game.getGameState() == GameState.WAITING) {
+        if (game.getGameState() == GameState.WAITING) {
             MinigamesAPI.getScoreboardModule().provideScoreboard(user.getPlayer(), new BridgeLobbyPreGameBoard(user));
         } else {
             MinigamesAPI.getScoreboardModule().provideScoreboard(user.getPlayer(), new BridgeGameBoard(game.getPlayer(user)));
@@ -65,7 +67,7 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
         }
 
         OffloadTask.offloadSync(() -> {
-            user.getPlayer().teleport(new Location(Bukkit.getWorld("final-lobby"), 30,83,-51));
+            user.getPlayer().teleport(new Location(Bukkit.getWorld("final-lobby"), 30, 83, -51));
             user.getPlayer().playSound(user.getPlayer().getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 1);
         });
     }
@@ -74,13 +76,13 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
         BridgeTeam red = game.getTeamManager().getRegisteredTeams().get(game.getTeamManager().getTeams().get("red"));
         BridgeTeam blue = game.getTeamManager().getRegisteredTeams().get(game.getTeamManager().getTeams().get("blue"));
 
-        player.getInventory().setItem(0, new ItemBuilder(Material.PAPER).setName("&2&lVote for map").toItemStack());
-        player.getInventory().setItem(1, new ItemBuilder(Material.GOLDEN_AXE).setName("&6&lChange Kit").toItemStack());
+        player.getInventory().setItem(0, new ItemBuilder(Material.PAPER).setName("&2&lVote for map &r&7(Right click)").toItemStack());
+        player.getInventory().setItem(1, new ItemBuilder(Material.GOLDEN_AXE).setName("&6&lChange Kit &r&7(Right click)").toItemStack());
         player.getInventory().setItem(3, addTeamSelector(red.getTeamItem(), red));
-        player.getInventory().setItem(4, new ItemBuilder(Material.MAP).setName("&a&lRandom Team").toItemStack());
+        player.getInventory().setItem(4, new ItemBuilder(Material.MAP).setName("&a&lRandom Team &r&7(Right click)").toItemStack());
         player.getInventory().setItem(5, addTeamSelector(blue.getTeamItem(), blue));
 
-        player.getInventory().setItem(8, new ItemBuilder(Material.RED_BED).setName("&c&lLeave").toItemStack());
+        player.getInventory().setItem(8, new ItemBuilder(Material.RED_BED).setName("&c&lLeave &r&7(Right click)").toItemStack());
     }
 
     @Override
@@ -88,30 +90,35 @@ public class TheBridgeLobby extends AbstractLobby implements TeamSelect<BridgeTe
 
         user.getGameObject(TheBridgeGame.class).getTeamManager().addPlayerToTeam((BridgeUser) user, team);
 
+        ((BridgeUser) user).setTeam(team);
+        if (user.getGameObject().getGameState() == GameState.IN_GAME) {
+            user.getGameObject().onPlayerStartGame(user);
+        }
+
         MinigamesAPI.broadcastGame(user.getGame(), String.format("&a%s &7has joined team %s", user.getName(), team.getDisplayName()));
     }
 
     private void onItemITT(GameUser user, ItemStack itemStack) {
-        if(itemStack.getType().equals(Material.PAPER)) {
-            BridgeMapVoter voter = (BridgeMapVoter) user.getGameObject().getMapVoter();
-            voter.openVoteGUI(user);
-        } else if(itemStack.getType().equals(Material.MAP)) {
-
-            Optional<BridgeTeam> randomTeam = user.getGameObject(TheBridgeGame.class).getTeamManager().getRandomTeam();
-
-            if(randomTeam.isPresent()) {
-                chooseTeam(user, randomTeam.get());
-            } else {
-                user.getPlayer().sendMessage("Teams are full.");
+        switch (itemStack.getType()) {
+            case PAPER -> {
+                BridgeMapVoter voter = (BridgeMapVoter) user.getGameObject().getMapVoter();
+                voter.openVoteGUI(user);
             }
-        } else if(itemStack.getType().equals(Material.GOLDEN_AXE)) {
-            onKitSelect(user);
+            case MAP -> {
+                Optional<BridgeTeam> randomTeam = user.getGameObject(TheBridgeGame.class).getTeamManager().getRandomTeam();
+
+                if (randomTeam.isPresent())
+                    chooseTeam(user, randomTeam.get());
+                else
+                    user.getPlayer().sendMessage("Teams are full.");
+            }
+            case GOLDEN_AXE -> onKitSelect(user);
         }
     }
 
     private void onKitSelect(GameUser user) {
         BridgeUser bridgeUser = Users.getUser(user, BridgeUser.class);
-        if(bridgeUser == null) return;
+        if (bridgeUser == null) return;
         MinigamesAPI.getKitRegistry(BridgeKitRegistry.class).openKitGUI(bridgeUser);
     }
 }

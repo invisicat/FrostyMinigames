@@ -2,6 +2,7 @@ package dev.ricecx.frostygamerzone.thebridge.boards;
 
 import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.bukkitapi.scoreboard.FrostBoard;
+import dev.ricecx.frostygamerzone.minigameapi.board.FrostCrossCompatBoard;
 import dev.ricecx.frostygamerzone.thebridge.TheBridgeGame;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeamManager;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
@@ -10,7 +11,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class BridgeGameBoard extends FrostBoard {
+public class BridgeGameBoard extends FrostCrossCompatBoard {
 
     private final BridgeUser player;
     private final long startTime;
