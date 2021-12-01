@@ -90,6 +90,7 @@ public interface Game<T extends Team<U>, U extends GameUser> extends Minigame {
 
 
     default Location getLocation(Location location) {
+        if(location == null) location = new Location(getWorld(), 0, 0, 0);
         location.setWorld(getWorld());
 
         return location;

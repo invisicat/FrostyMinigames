@@ -1,10 +1,10 @@
 package dev.ricecx.frostygamerzone.minigameapi.citizens;
 
 import com.google.common.collect.Maps;
-import org.bukkit.entity.Player;
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.util.Map;
 import java.util.UUID;
@@ -29,9 +29,14 @@ public class Citizens implements Listener {
     }
 
     @EventHandler
-    public void onNPCHit(EntityDamageByEntityEvent evt) {
-        if(npcs.containsKey(evt.getEntity().getUniqueId())) {
-            npcs.get(evt.getEntity().getUniqueId()).getOnClick().accept(((Player) evt.getDamager()));
+    public void onNPCHit(PlayerInteractEntityEvent evt) {
+        LoggingUtils.info("INTERASCTED WITH " + evt.getRightClicked().getType() + " WITH UUID " + evt.getRightClicked().getUniqueId());
+
+        for (UUID uuid : npcs.keySet()) {
+            LoggingUtils.info("----- uuid " + uuid);
+        }
+        if(npcs.containsKey(evt.getRightClicked().getUniqueId())) {
+            npcs.get(evt.getRightClicked().getUniqueId()).getOnClick().accept(evt.getPlayer());
         }
     }
 }

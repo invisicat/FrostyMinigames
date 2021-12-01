@@ -1,5 +1,6 @@
 package dev.ricecx.frostygamerzone.thebridge;
 
+import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.citizens.FrostNPC;
@@ -111,9 +112,10 @@ public class TheBridgeGame extends AbstractGame<BridgeUser, BridgeTeam> implemen
         for (UUID shopNPC : shopNPCIds) {
             FrostNPC frostNPC = MinigamesAPI.getCitizens().getNPC(shopNPC);
             NPC npc = frostNPC.getNPC();
+            npc.setSkin(frostNPC.getSkinTextures());
             npc.spawnNPC(player.getPlayer());
-//            npc.setSkin(frostNPC.getSkinTextures());
-            npc.setNameTagVisibility(player.getPlayer(), false);
+            npc.setDisplayName(Utils.color("&6&lShop"));
+            npc.setNameTagVisibility(player.getPlayer(), true);
             npc.lookAtPlayer(player.getPlayer(), player.getPlayer());
             npc.removeFromTabList(player.getPlayer());
         }

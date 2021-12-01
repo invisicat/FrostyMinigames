@@ -1,5 +1,7 @@
 package dev.ricecx.frostygamerzone.thebridge.handler;
 
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
+import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -39,20 +42,23 @@ public class OreProtection implements Listener {
         airMaterials.addAll(Tag.LOGS.getValues());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     private void onBlockBreak(BlockBreakEvent evt) {
-        if(!isActive()) return;
+        if(!isActive() || !MinigamesAPI.isIngame(evt.getPlayer())) return;
         Block brokenBlock = evt.getBlock();
         Material blockMaterial = brokenBlock.getBlockData().getMaterial();
         Player player = evt.getPlayer();
 
         HandToolType toolType = getHandToolType(player.getInventory().getItemInMainHand().getType());
 
-        if(toolType.contains(blockMaterial)) {
+        if(toolType.canMine(blockMaterial)) {
             // add statistics here.
 
             if(toolType.canRegen(blockMaterial)) {
-                regenerateBlock(brokenBlock, 5, Material.BEDROCK);
+                RegenKey key = toolType.regen(blockMaterial);
+                if(key == null) { evt.setCancelled(true); return; }
+
+                regenerateBlock(brokenBlock, key.regenTime(), key.replacementMaterial());
                 player.getInventory().addItem(brokenBlock.getDrops().toArray(ItemStack[]::new));
                 evt.setDropItems(false);
             }
@@ -103,7 +109,8 @@ public class OreProtection implements Listener {
          * @param material Material to mine
          * @return If it's mineable or not
          */
-        public boolean contains(Material material) {
+        public boolean canMine(Material material) {
+            if(this == HAND) return true;
             return this.acceptedMaterials.contains(material);
         }
 
@@ -113,10 +120,10 @@ public class OreProtection implements Listener {
         }
 
         public RegenKey regen(Material material) {
-            if(this == PICKAXE || this == AXE) return null;
 
             // TODO: add wood regeneration
             if(airMaterials.contains(material)) return new RegenKey(material, Material.AIR, 10);
+            if(ores.contains(material)) return new RegenKey(material, Material.BEDROCK, 20);
 
             return null;
         }

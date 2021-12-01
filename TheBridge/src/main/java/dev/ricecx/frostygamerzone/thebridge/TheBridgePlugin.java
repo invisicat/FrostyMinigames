@@ -43,7 +43,7 @@ public final class TheBridgePlugin extends MinigamesPlugin implements UserRegist
                 new FightHandler(),
                 new NexusHandler(),
                 new AntiCraft(),
-       //         new OreProtection(),
+                new OreProtection(),
                 new PoisonWaters(),
                 new SoulBound()
         );

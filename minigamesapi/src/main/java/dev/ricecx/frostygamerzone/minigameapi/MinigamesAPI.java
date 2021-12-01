@@ -9,6 +9,7 @@ import com.viaversion.viaversion.api.ViaAPI;
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.bukkitapi.modules.scoreboard.ScoreboardModule;
+import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.adapters.LocationAdapter;
 import dev.ricecx.frostygamerzone.minigameapi.citizens.Citizens;
@@ -29,6 +30,8 @@ import dev.ricecx.frostygamerzone.minigameapi.modules.chat.ChatModule;
 import dev.ricecx.frostygamerzone.minigameapi.modules.gui.GUIModule;
 import dev.ricecx.frostygamerzone.minigameapi.slime.WorldManager;
 import dev.ricecx.frostygamerzone.minigameapi.team.TeamListener;
+import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
+import dev.ricecx.frostygamerzone.minigameapi.users.GameUserStatus;
 import dev.ricecx.frostygamerzone.minigameapi.users.UserManager;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
 import dev.ricecx.frostygamerzone.minigameapi.utils.Reflection;
@@ -151,5 +154,12 @@ public class MinigamesAPI {
     }
     public static <T extends KitRegistry<?, ?>> T getKitRegistry(Class<T> man) {
         return man.cast(getKitRegistry());
+    }
+
+    public static boolean isIngame(Player player) {
+        GameUser user = Users.getUser(player, GameUser.class);
+        if(user == null) return false;
+
+        return user.getGameUserStatus() == GameUserStatus.INGAME;
     }
 }
