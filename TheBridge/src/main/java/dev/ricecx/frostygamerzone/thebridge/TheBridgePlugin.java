@@ -3,11 +3,11 @@ package dev.ricecx.frostygamerzone.thebridge;
 
 import dev.ricecx.frostygamerzone.bukkitapi.CorePlugin;
 import dev.ricecx.frostygamerzone.bukkitapi.user.utils.UserRegister;
+import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.Minigame;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesPlugin;
 import dev.ricecx.frostygamerzone.minigameapi.buildtools.commands.BuildToolsCommand;
-import dev.ricecx.frostygamerzone.minigameapi.kits.KitRegistry;
 import dev.ricecx.frostygamerzone.thebridge.buildtools.SrvCommand;
 import dev.ricecx.frostygamerzone.thebridge.commands.KitCommand;
 import dev.ricecx.frostygamerzone.thebridge.commands.SoulBoundCommand;
@@ -27,6 +27,7 @@ public final class TheBridgePlugin extends MinigamesPlugin implements UserRegist
     public void onEnable() {
         // Plugin startup logic
         super.onEnable();
+        LoggingUtils.setVerbose(true);
 
         MinigamesAPI.setMinigame(Minigame.THE_BRIDGE);
         MinigamesAPI.setMapManager(new BridgeMapManager());

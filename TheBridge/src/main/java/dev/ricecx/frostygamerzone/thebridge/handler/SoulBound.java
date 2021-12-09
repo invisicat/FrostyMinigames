@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author RiceCX
+ */
 public class SoulBound implements Listener {
 
     public static String SOULBOUND_KEY = "soulbound";
@@ -30,20 +33,22 @@ public class SoulBound implements Listener {
         UUID playerUUID = evt.getPlayer().getUniqueId();
 
         NBTItem nbtItem = new NBTItem(itemStack);
-        if(!nbtItem.hasKey(SOULBOUND_KEY)) return;
+        if (!nbtItem.hasKey(SOULBOUND_KEY)) return;
 
         SoulboundTypes type = SoulboundTypes.parseNBT(nbtItem);
-        if(type == null) return; // Soulbound was probably not set correctly
+        if (type == null) return; // Soulbound was probably not set correctly
 
-        if(type == SoulboundTypes.CANNOT_DROP) {
-            evt.getPlayer().sendMessage("(!) Sorry, you cannot drop this item as it's bounded to you forever!");
+        if (type == SoulboundTypes.CANNOT_DROP) {
+            evt.getPlayer().sendMessage("(!) Sorry, you cannot drop this item as it's bound to you forever!");
             evt.setCancelled(true);
-        } else if(type == SoulboundTypes.LENIENT) {
+        } else if (type == SoulboundTypes.LENIENT) {
             ItemStack stack = dropTimerCache.getIfPresent(playerUUID);
-            if(stack == null) {
+            if (stack == null) {
                 evt.getPlayer().sendMessage("(!) Are you sure you want to drop this item? Drop again within 10 seconds to drop");
                 dropTimerCache.put(playerUUID, itemStack);
                 evt.setCancelled(true);
+            } else {
+                evt.getItemDrop().remove();
             }
         }
     }
@@ -54,7 +59,8 @@ public class SoulBound implements Listener {
 
         private static final SoulboundTypes[] CACHE = values();
 
-        @Getter private final String nbtValue;
+        @Getter
+        private final String nbtValue;
 
         SoulboundTypes(String nbtValue) {
             this.nbtValue = nbtValue;
@@ -62,7 +68,7 @@ public class SoulBound implements Listener {
 
         public static SoulboundTypes from(String str) {
             for (SoulboundTypes soulboundTypes : CACHE) {
-                if(soulboundTypes.getNbtValue().equals(str)) return soulboundTypes;
+                if (soulboundTypes.getNbtValue().equals(str)) return soulboundTypes;
             }
             return null;
         }
@@ -73,34 +79,34 @@ public class SoulBound implements Listener {
             return from(type);
         }
 
-        public ItemStack setNBT(ItemStack item, NBTItem nbtItem, boolean lore) {
-            nbtItem.setString(SOULBOUND_KEY, getNbtValue());
-            ItemStack stack = item;
-            if(lore)
-                stack = setLore(item);
+        public ItemStack setNBT(ItemStack item, boolean lore) {
+            NBTItem nbt = lore ? new NBTItem(setLore(item)) : new NBTItem(item);
 
-            nbtItem.applyNBT(item);
+            nbt.setString(SOULBOUND_KEY, getNbtValue());
+            nbt.mergeNBT(item);
 
-            return stack;
+            return nbt.getItem();
         }
 
         private static ItemStack setLore(ItemStack item) {
-            ItemStack stack = new ItemBuilder(item).lore("Soulbound").toItemStack();
+            List<String> previousLore = item.getItemMeta() != null && item.getItemMeta().getLore() != null ? item.getItemMeta().getLore() : new ArrayList<>();
 
-            LoggingUtils.info("Providing soul bound lore for " + item.getType());
+            ItemStack newStack = item.clone();
+            ItemMeta meta = newStack.getItemMeta();
+            previousLore.add(" ");
+            previousLore.add(Utils.color("&5Soulbound"));
 
-            return stack;
-        }
+            if (meta != null) meta.setLore(previousLore);
 
-        public void setNBT(ItemStack item, NBTItem nbtItem) {
-            setNBT(item, nbtItem, true);
+            newStack.setItemMeta(meta);
+            LoggingUtils.debug("Providing soul bound lore for " + item.getType());
+            return newStack;
         }
 
         public ItemStack wrap(ItemStack item) {
-            NBTItem nbt = new NBTItem(item);
-
-            return setNBT(item, nbt, true);
+            return setNBT(item, true);
         }
+
     }
 
 }

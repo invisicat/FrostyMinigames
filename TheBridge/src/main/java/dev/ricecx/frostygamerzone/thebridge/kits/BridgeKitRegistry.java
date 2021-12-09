@@ -43,6 +43,7 @@ public class BridgeKitRegistry extends KitRegistry<TheBridgeKits, BridgeUser> {
 
 
     @SuppressWarnings("UnstableApiUsage")
+    @Override
     public void openKitGUI(BridgeUser user) {
         InventoryGui gui = new InventoryGui(CorePlugin.getInstance(), user.getPlayer(), "Kits", generateKitGUI().toArray(String[]::new));
 
@@ -69,6 +70,7 @@ public class BridgeKitRegistry extends KitRegistry<TheBridgeKits, BridgeUser> {
                 user.getPlayer().playSound(user.getPlayer().getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1, 1);
                 return true;
             }, both);
+            // I didn't even know that you could do (...expression).toString()
         }
 
         gui.show(user.getPlayer());

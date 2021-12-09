@@ -15,24 +15,21 @@ public interface MapMetaConsumer<T extends MapMeta> {
     default <V> V getTeamMappedMethod(Team<?> team, String keyword, T meta, Class<V> clazz) {
         V obj = null;
         if(team.getTeamColor() == TeamColor.NONE) {
-            LoggingUtils.error("WTFFFFFFFFFFF");
-            LoggingUtils.info("WTFFFFFFFFFFF");
             throw new IllegalArgumentException("Team color is not found. We cannot map this team! " + team.getTeamID());
         }
         for (Field field : meta.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            LoggingUtils.info("Mapping Utils - Found declared methods: " + field.getName());
+            LoggingUtils.debug("Mapping Utils - Found declared methods: " + field.getName());
 
             // Contains keywords and team color.
             if(field.getName().toLowerCase().contains(keyword.toLowerCase()) && field.getName().toLowerCase().contains(team.getTeamColor().getName().toLowerCase())) {
                 // since this is a get method it should be easily invoked w/o any arguments
-                System.out.println("OBJECT FOUND JAJAJJAJAJJAJAJAJ");
                 obj = clazz.cast(friendlyGet(meta, field));
                 break;
             }
         }
 
-        System.out.println(obj);
+
         return obj;
     }
 

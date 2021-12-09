@@ -7,10 +7,11 @@ import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+
+import java.util.List;
 
 public class MedicKit extends TheBridgeKit {
 
@@ -18,14 +19,14 @@ public class MedicKit extends TheBridgeKit {
     TheBridgeKits kit = TheBridgeKits.HERO;
 
     @Override
-    public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
-        return new ItemStack[] {
+    public List<ItemStack> setItems(KitUser<BridgeUser, TheBridgeKits> player) {
+        return List.of(new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 new ItemStack(Material.BOW),
                 new ItemStack(Material.ARROW, 32),
                 generatePotionMeta(Material.POTION, new PotionData(PotionType.INSTANT_HEAL)),
                 generatePotionMeta(Material.SPLASH_POTION, new PotionData(PotionType.REGEN)),
-        };
+        });
     }
 
     private ItemStack generatePotionMeta(Material mat, PotionData data) {

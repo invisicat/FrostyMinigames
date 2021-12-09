@@ -61,7 +61,7 @@ public class BridgeTeam extends Team<BridgeUser> implements MapMetaConsumer<Brid
         Block nexusBlock = breaker.getGameObject().getLocation(nexusLocation).getBlock();
 
         if(isDead()) {
-            // This nexus was broken. Send the destroy message
+            // This nexus was broken. Send the message that the nexus was destroyed.
             MinigamesAPI.broadcastGame(breaker.getGame(), String.format("&c%s&7 has destroyed the %s&7's nexus!", breaker.getName(), getDisplayName()));
 
             breaker.getGameObject().executePlayer((p) -> p.playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1, 0));

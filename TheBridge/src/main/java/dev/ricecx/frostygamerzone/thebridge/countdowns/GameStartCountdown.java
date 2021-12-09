@@ -1,5 +1,6 @@
 package dev.ricecx.frostygamerzone.thebridge.countdowns;
 
+import dev.ricecx.frostygamerzone.bukkitapi.Utils;
 import dev.ricecx.frostygamerzone.bukkitapi.user.Users;
 import dev.ricecx.frostygamerzone.common.LoggingUtils;
 import dev.ricecx.frostygamerzone.minigameapi.MinigamesAPI;
@@ -12,6 +13,8 @@ import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapManager;
 import dev.ricecx.frostygamerzone.thebridge.map.BridgeMapMeta;
 import dev.ricecx.frostygamerzone.thebridge.team.BridgeTeam;
 import dev.ricecx.frostygamerzone.thebridge.users.BridgeUser;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -62,10 +65,11 @@ public class GameStartCountdown extends GameCountdown<BridgeTeam, BridgeUser> {
 
     @Override
     public void onCount(int current) {
+        getGame().executePlayer((p) -> p.setLevel(getTimer() - current));
         if(current % 10 == 0 || current >= getTimer() - 10) {
             MinigamesAPI.broadcastGame(getGame(), String.format("&AGame is starting in &e%d &aseconds", getTimer() - current));
             getGame().executePlayer((p) -> p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1));
-            getGame().executePlayer((p) -> p.setTotalExperience(current));
+            getGame().executePlayer((p) -> p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(Utils.color("&eGame is starting in &e" + (getTimer() - current) + " &aseconds"))));
         }
     }
 }

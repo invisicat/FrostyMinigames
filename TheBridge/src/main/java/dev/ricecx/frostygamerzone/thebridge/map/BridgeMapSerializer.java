@@ -29,7 +29,12 @@ public class BridgeMapSerializer implements JsonSerializer<BridgeMapMeta>, JsonD
     public BridgeMapMeta deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject mapObject = json.getAsJsonObject();
         BridgeMapMetaImpl map = new BridgeMapMetaImpl();
-        LoggingUtils.info("Deserialzing MAP");
+
+        if(!mapObject.has("name")) {
+            LoggingUtils.error("Map does not have a name, skipping this map");
+            return null;
+        }
+        LoggingUtils.info("Loading map: " + mapObject.get("name").getAsString());
 
 
         map.setSpectatorSpawn(context.deserialize(mapObject.get("spectatorSpawn"), Location.class));
@@ -40,7 +45,7 @@ public class BridgeMapSerializer implements JsonSerializer<BridgeMapMeta>, JsonD
         map.setShops(context.deserialize(mapObject.get("shops"), locationType));
         map.setRegions(context.deserialize(mapObject.get("regions"), locationType));
 
-        LoggingUtils.info(map.toString());
+        LoggingUtils.debug(map.toString());
         return map;
     }
 }

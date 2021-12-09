@@ -10,17 +10,19 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ButcherKit extends TheBridgeKit {
     @Getter
     TheBridgeKits kit = TheBridgeKits.BUTCHER;
 
     @Override
-    public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
-        return new ItemStack[] {
+    public List<ItemStack> setItems(KitUser<BridgeUser, TheBridgeKits> player) {
+        return List.of(new ItemStack[]{
                 new ItemBuilder(Material.IRON_AXE).setName("&eButcher's Axe").addEnchant(Enchantment.DURABILITY, 1).hideAttributes().toItemStack(),
                 new ItemStack(Material.WOODEN_PICKAXE),
                 new ItemStack(Material.WOODEN_AXE),
                 new ItemStack(Material.CRAFTING_TABLE)
-        };
+        });
     }
 }

@@ -8,18 +8,21 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ArcherKit extends TheBridgeKit {
 
-    @Getter TheBridgeKits kit = TheBridgeKits.ARCHER;
+    @Getter
+    TheBridgeKits kit = TheBridgeKits.ARCHER;
 
     @Override
-    public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
-        return new ItemStack[] {
+    public List<ItemStack> setItems(KitUser<BridgeUser, TheBridgeKits> player) {
+        return List.of(new ItemStack[]{
                 new ItemStack(Material.BOW),
                 new ItemStack(Material.ARROW, 32),
                 new ItemStack(Material.WOODEN_PICKAXE),
                 new ItemStack(Material.WOODEN_SHOVEL),
                 new ItemStack(Material.CRAFTING_TABLE)
-        };
+        });
     }
 }

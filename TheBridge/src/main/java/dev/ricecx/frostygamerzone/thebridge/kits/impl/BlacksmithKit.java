@@ -8,17 +8,19 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class BlacksmithKit extends TheBridgeKit {
     @Getter
     TheBridgeKits kit = TheBridgeKits.BLACKSMITH;
 
     @Override
-    public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
-        return new ItemStack[] {
+    public List<ItemStack> setItems(KitUser<BridgeUser, TheBridgeKits> player) {
+        return List.of(new ItemStack[]{
                 new ItemStack(Material.STONE_SWORD),
                 new ItemStack(Material.WOODEN_PICKAXE),
                 new ItemStack(Material.WOODEN_AXE),
                 new ItemStack(Material.CRAFTING_TABLE)
-        };
+        });
     }
 }

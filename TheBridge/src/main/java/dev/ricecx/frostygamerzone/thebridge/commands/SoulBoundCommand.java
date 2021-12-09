@@ -17,7 +17,10 @@ public class SoulBoundCommand implements Command {
     public void run(CommandSender commandSender, String[] strings) {
         ItemStack item = ((Player) commandSender).getInventory().getItemInMainHand();
 
-        NBTItem nbtItem = new NBTItem(item);
-        SoulBound.SoulboundTypes.LENIENT.setNBT(item, nbtItem, true);
+        ItemStack newItemStack = SoulBound.SoulboundTypes.LENIENT.setNBT(item, true);
+
+        ((Player) commandSender).getInventory().addItem(newItemStack);
+        // Tell the player that the item is now soulbound
+        commandSender.sendMessage("§aItem is now soulbound");
     }
 }

@@ -11,18 +11,20 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class NewbKit extends TheBridgeKit {
     @Getter
     TheBridgeKits kit = TheBridgeKits.NEWB;
 
     @Override
-    public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
-        return new ItemStack[] {
+    public List<ItemStack> setItems(KitUser<BridgeUser, TheBridgeKits> player) {
+        return List.of(
                 SoulBound.SoulboundTypes.LENIENT.wrap(new ItemBuilder(Material.STONE_SWORD).addEnchant(Enchantment.DAMAGE_ALL, 1).lore("&5&oNIGGERS").toItemStack()),
                 SoulBound.SoulboundTypes.CANNOT_DROP.wrap(new ItemStack(Material.WOODEN_PICKAXE)),
                 new ItemBuilder(Material.WOODEN_AXE).toItemStack(),
                 new ItemBuilder(Material.WOODEN_SHOVEL).toItemStack(),
-                new ItemBuilder(Material.CRAFTING_TABLE).toItemStack(),
-        };
+                new ItemBuilder(Material.CRAFTING_TABLE).toItemStack()
+        );
     }
 }

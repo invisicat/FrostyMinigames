@@ -1,5 +1,7 @@
 package dev.ricecx.frostygamerzone.minigameapi;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,10 +36,11 @@ import dev.ricecx.frostygamerzone.minigameapi.users.GameUser;
 import dev.ricecx.frostygamerzone.minigameapi.users.GameUserStatus;
 import dev.ricecx.frostygamerzone.minigameapi.users.UserManager;
 import dev.ricecx.frostygamerzone.minigameapi.utils.OffloadTask;
-import dev.ricecx.frostygamerzone.minigameapi.utils.Reflection;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -92,6 +95,8 @@ public class MinigamesAPI {
     private static Citizens citizens;
     @Getter
     private static ViaAPI<Player> viaVersionAPI;
+    @Getter
+    private static ProtocolManager protocolManager;
 
     @SuppressWarnings("unchecked") /* Unchecked casts suck :P */
     public static void loadAPI() {
@@ -100,6 +105,7 @@ public class MinigamesAPI {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
         Preconditions.checkNotNull(plugin, "SLIME WORLD MANAGER IS NOT LOADED. PROCEED WITH CAUTION.");
         slimePlugin = (SlimePlugin) plugin;
+        protocolManager = ProtocolLibrary.getProtocolManager();
         playerVisibilityTask = new PlayerVisibilityTask();
         inventoryClicker = InventoryClicker.getInstance();
 

@@ -8,6 +8,8 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class BuilderKit extends TheBridgeKit {
 
 
@@ -15,8 +17,8 @@ public class BuilderKit extends TheBridgeKit {
     TheBridgeKits kit = TheBridgeKits.BUILDER;
 
     @Override
-    public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
-        return new ItemStack[] {
+    public List<ItemStack> setItems(KitUser<BridgeUser, TheBridgeKits> player) {
+        return List.of(new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 new ItemStack(Material.STONE_AXE),
                 new ItemStack(Material.STONE_PICKAXE),
@@ -24,6 +26,6 @@ public class BuilderKit extends TheBridgeKit {
                 new ItemStack(Material.DIRT, 32),
                 new ItemStack(Material.COBBLESTONE, 64),
                 new ItemStack(Material.OAK_PLANKS, 64),
-        };
+        });
     }
 }

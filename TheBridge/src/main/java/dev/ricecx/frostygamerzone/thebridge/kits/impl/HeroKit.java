@@ -10,20 +10,22 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class HeroKit extends TheBridgeKit {
     @Getter
     TheBridgeKits kit = TheBridgeKits.HERO;
 
 
     @Override
-    public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
-        return new ItemStack[] {
+    public List<ItemStack> setItems(KitUser<BridgeUser, TheBridgeKits> player) {
+        return List.of(new ItemStack[]{
                 new ItemBuilder(Material.STONE_SWORD).addEnchant(Enchantment.DAMAGE_ALL, 1).addEnchant(Enchantment.KNOCKBACK, 1).toItemStack(),
                 new ItemStack(Material.WOODEN_PICKAXE),
                 new ItemStack(Material.WOODEN_AXE),
                 new ItemStack(Material.WOODEN_SHOVEL),
                 new ItemStack(Material.CRAFTING_TABLE),
                 new ItemStack(Material.SHEARS),
-        };
+        });
     }
 }

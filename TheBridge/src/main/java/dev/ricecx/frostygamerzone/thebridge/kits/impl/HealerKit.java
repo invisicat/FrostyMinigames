@@ -9,18 +9,20 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class HealerKit extends TheBridgeKit {
     @Getter
     TheBridgeKits kit = TheBridgeKits.HEALER;
 
     @Override
-    public ItemStack[] setItems(KitUser<BridgeUser, TheBridgeKits> player) {
-        return new ItemStack[] {
+    public List<ItemStack> setItems(KitUser<BridgeUser, TheBridgeKits> player) {
+        return List.of(new ItemStack[]{
                 new ItemBuilder(Material.BOW).setName("&dHealer's &7bow").toItemStack(),
                 new ItemStack(Material.WOODEN_PICKAXE),
                 new ItemStack(Material.WOODEN_SHOVEL),
                 new ItemStack(Material.CRAFTING_TABLE),
                 new ItemStack(Material.ARROW, 10)
-        };
+        });
     }
 }
